@@ -1,0 +1,6 @@
+
+sec-inp::-webkit-scrollbar{display: none;}sec-inp{overflow: auto;scrollbar-width:none;-ms-overflow-style:none;}
+
+display-input::-webkit-scrollbar {
+      display: none;  /* Chrome Safari */
+}

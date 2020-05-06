@@ -13,6 +13,7 @@ const rout = {
 
     let key_inp_slug = h('input.form-control.inp-dark.mb-2',{
       type: 'text',
+      autocomplete: 'new-password',
       onkeyup: function(evt){
         let kf = ss.get_enc('keyfile');
         if(!kf){
@@ -27,7 +28,7 @@ const rout = {
         } else {
           kf.slug = evt.target.value;
           ss.set_enc('keyfile', kf);
-          cryptokey_inp.value = js(kf)
+          cryptokey_inp.innerText = js(kf)
           db_update(kf.slug)
         }
 
@@ -40,56 +41,22 @@ const rout = {
     key_inp_3 = tpl.sec_inp(),
     key_inp_4 = tpl.sec_inp(),
     key_inp_5 = tpl.sec_inp(),
-    key_res = h('textarea.form-control.inp-dark.mb-2.sec-txt',{
-      placeholder: 'secure message',
-      readOnly: true,
-      rows: 5
+    enc_ta = h('sec-ta.form-control.inp-dark.mb-2.h-5', {
+      innerText: 'Encrypted text'
     }),
-    enc_ta = h('textarea.form-control.inp-dark.mb-2', {
-      rows: 3,
-      readOnly: true,
-      placeholder: 'Encrypted text'
+    hm_inp = h('sec-inp.form-control.inp-dark.mb-3', {
+      innerText: 'Message HMAC'
     }),
-    hm_inp = h('input.form-control.inp-dark.mb-2', {
-      type: 'text',
-      readOnly: true,
-      placeholder: 'Message HMAC'
+    dec_ta = h('sec-ta.form-control.inp-dark.mb-3.h-5', {
+      innerText: 'Decrypted text'
     }),
-    dec_ta = h('textarea.form-control.inp-dark.mb-2', {
-      rows: 3,
-      readOnly: true,
-      placeholder: 'Decrypted text'
-    }),
-    name_inp = h('input.form-control.inp-dark.mb-2',{
-      placeholder: 'name',
-      onkeyup: utils.debounce(function(evt) {
-        let name = evt.target.value;
-        if(name.length > 0){
-          //obj.name = xcrypt.dec3x(name, c_keys, c_order, hex)
-        }
-      },2000)
-    }),
-    subject_inp = h('input.form-control.inp-dark.mb-2',{
-      placeholder: 'subject',
-      onkeyup: utils.debounce(function(evt) {
-        obj.subject = evt.target.value;
-
-      },2000)
-    }),
-    msg_inp = h('textarea.form-control.inp-dark.mb-2',{
-      placeholder: 'plaintext message',
-      rows: 10,
-      onkeyup: utils.debounce(function(evt) {
-        obj.msg = evt.target.value;
-      },2000)
-    }),
-    cryptokey_inp = h('textarea.form-control.inp-dark', {
+    cryptokey_inp = h('sec-ta.form-control.inp-dark.h-10.sec-txt', {
       rows: 6
     }),
     import_inp = h('input.hidden', {type: 'file'}),
     export_key = h('small.float-right.cp.sh-95', {
       onclick: function(){
-        let data = cryptokey_inp.value;
+        let data = cryptokey_inp.innerText;
         utils.fs_write(data, 'cryptokey')
       }
     }, 'Export Cryptokey'),
@@ -107,11 +74,17 @@ const rout = {
     }, 'New Cryptokey'),
     key_pass = h('input.form-control.inp-dark', {
       type: 'password',
+      autocomplete: 'new-password',
       placeholder: 'Enter keyfile password'
     }),
     create_cipherkey = h('div.row',
-      h('div.col-md-6',
+      h('div.col-lg-6',
         h('h5.text-success', 'Cryptokey',
+          h('i.icon-eye.float-right.cp.ml-4.float-right', {
+            onclick: function(){
+              cryptokey_inp.classList.toggle('sec-txt')
+            }
+          }),
           export_key,
           h('span.float-right.ml-2.mr-2', ' / '),
           new_key
@@ -125,143 +98,164 @@ const rout = {
         ),
         h('button.btn.btn-sm.btn-outline-success.mt-2.sh-95.mr-2', {
           type: 'button',
-          onclick: function(){
+          onclick: function(evt){
+            utils.add_sp(evt.target, 'Selecting');
             import_inp.click();
+            utils.del_sp(evt.target, 'Select file');
           }
         }, 'Select file'),
         h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
           type: 'button',
-          onclick: function(){
+          onclick: function(evt){
+            utils.add_sp(evt.target, 'Loading data');
             try {
               var reader = new FileReader();
               var file = import_inp.files[0];
-              reader.onload = function(evt) {
+              reader.onload = function(e) {
                 try {
-                  evt = jp(evt.target.result);
-                  if(evt.ID){
+                  e = jp(e.target.result);
+                  if(e.ID){
                     utils.add_data(
-                      js(evt), key_inp_slug, key_inp_id, key_inp_0,
+                      js(e), key_inp_slug, key_inp_id, key_inp_0,
                       key_inp_1, key_inp_2, key_inp_3, key_inp_4,
                       cryptokey_inp
                     )
+                    utils.del_sp(evt.target, 'Load data');
                     return utils.toast('success', 'Cryptokey loaded');
                   } else {
                     throw 'not json'
                   }
 
                 } catch (err) {
-                  cryptokey_inp.value = evt.target.result;
-                  utils.toast('info', 'data loaded')
+                  cryptokey_inp.innerText = evt.target.result;
+                  utils.toast('info', 'data loaded');
+                  utils.del_sp(evt.target, 'Load data');
                 }
               };
 
               reader.readAsText(file);
             } catch (err) {
-              utils.toast('warning', 'No file chosen')
+              utils.toast('warning', 'No file chosen');
+              utils.del_sp(evt.target, 'Load data');
             }
           }
         }, 'Load data'),
         h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
           type: 'button',
-          onclick: function(){
+          onclick: function(evt){
+            utils.add_sp(evt.target, 'Encrypting');
             let pass = key_pass.value;
             if(pass.length < 8){
-              return utils.toast('info','password length must be at least 8 characters');
+              utils.toast('info','password length must be at least 8 characters');
+              return utils.del_sp(evt.target, 'Encrypt keyfile');
             }
 
-            enc.aes_gcm(pass, cryptokey_inp.value, 'enc', function(err,res){
+            enc.aes_gcm(pass, cryptokey_inp.innerText, 'enc', function(err,res){
               if(err){
                 utils.toast('danger','invalid input data');
-                return ce(err)
+              } else {
+                cryptokey_inp.innerText = xcrypt.pack(res);
+                utils.toast('success','Keyfile encrypted');
               }
-              cryptokey_inp.value = xcrypt.pack(res);
-              utils.toast('success','Keyfile encrypted');
+              utils.del_sp(evt.target, 'Encrypt keyfile');
             })
           }
+
         }, 'Encrypt keyfile'),
         h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
           type: 'button',
-          onclick: function(){
+          onclick: function(evt){
+            utils.add_sp(evt.target, 'Decrypting');
             let pass = key_pass.value;
             if(pass.length < 8){
+              utils.del_sp(evt.target, 'Decrypt keyfile');
               return utils.toast('info','password length must be at least 8 characters');
             }
 
-            enc.aes_gcm(pass, xcrypt.pack(cryptokey_inp.value), 'dec', function(err,res){
+            enc.aes_gcm(pass, xcrypt.pack(cryptokey_inp.innerText), 'dec', function(err,res){
               if(err){
                 utils.toast('danger','invalid input data');
-                return ce(err)
+                utils.del_sp(evt.target, 'Decrypt keyfile');
+                ce(err)
+              } else {
+                try {
+                  utils.add_data(
+                    res, key_inp_slug, key_inp_id, key_inp_0,
+                    key_inp_1, key_inp_2, key_inp_3, key_inp_4,
+                    cryptokey_inp
+                  )
+                  utils.toast('success','Keyfile decrypted and loaded');
+                } catch (err) {
+                  utils.toast('danger','invalid input data');
+                }
               }
-
-              try {
-                utils.add_data(
-                  res, key_inp_slug, key_inp_id, key_inp_0,
-                  key_inp_1, key_inp_2, key_inp_3, key_inp_4,
-                  cryptokey_inp
-                )
-                utils.toast('success','Keyfile decrypted and loaded');
-              } catch (err) {
-
-              }
-
-
+              utils.del_sp(evt.target, 'Decrypt keyfile');
             })
           }
         }, 'Decrypt keyfile'),
         h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
           type: 'button',
-          onclick: function(){
+          onclick: function(evt){
+            utils.add_sp(evt.target, 'Saving data');
             let pass = key_pass.value;
             if(pass.length < 8){
-              return utils.toast('info','password length must be at least 8 characters');
+              utils.toast('info','password length must be at least 8 characters');
+              return utils.del_sp(evt.target, 'Store Local');
             }
 
-            enc.aes_gcm(pass, cryptokey_inp.value, 'enc', function(err,res){
+            enc.aes_gcm(pass, cryptokey_inp.innerText, 'enc', function(err,res){
               if(err){
                 utils.toast('danger','invalid input data');
-                return ce(err)
+                ce(err);
+              } else {
+                res = xcrypt.pack(res);
+                ls.set('encdata', res);
+                utils.toast('success','Encrypted Keyfile Stored locally');
               }
-              res = xcrypt.pack(res);
-              ls.set('encdata', res)
-              utils.toast('success','Encrypted Keyfile Stored locally');
+              utils.del_sp(evt.target, 'Store Local')
             })
           }
         }, 'Store Local'),
         h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
           type: 'button',
-          onclick: function(){
+          onclick: function(evt){
+            utils.add_sp(evt.target, 'Loading data');
             let pass = key_pass.value,
             data = ls.get('encdata');
+
             if(pass.length < 8){
+              utils.del_sp(evt.target, 'Load Local');
               return utils.toast('info','password length must be at least 8 characters');
             }
             if(!data){
+              utils.del_sp(evt.target, 'Load Local');
               return utils.toast('info','Encrypted Keyfile not found');
             }
 
             enc.aes_gcm(pass, xcrypt.pack(data), 'dec', function(err,res){
               if(err){
                 utils.toast('danger','Invalid Keyfile');
-                return ce(err)
+                ce(err);
+              } else {
+                try {
+                  utils.add_data(
+                    res, key_inp_slug, key_inp_id, key_inp_0,
+                    key_inp_1, key_inp_2, key_inp_3, key_inp_4,
+                    cryptokey_inp
+                  )
+                  utils.toast('success','Keyfile decrypted and loaded');
+                } catch (err) {
+                  utils.toast('danger','Invalid Keyfile');
+                }
               }
-
-              try {
-                utils.add_data(
-                  res, key_inp_slug, key_inp_id, key_inp_0,
-                  key_inp_1, key_inp_2, key_inp_3, key_inp_4,
-                  cryptokey_inp
-                )
-                return utils.toast('success','Keyfile decrypted and loaded');
-              } catch (err) {
-                utils.toast('danger','Invalid Keyfile');
-              }
-
+              utils.del_sp(evt.target, 'Load Local');
             })
           }
         }, 'Load Local'),
         h('h5.text-success.mt-4', 'Create Message'),
         h('div.form-group.mt-4',
           h('textarea.form-control.inp-dark.mb-3', {
+            autocomplete: 'off',
             rows: 3,
             placeholder: 'Start typing your message...',
             onkeyup: function(evt){
@@ -270,13 +264,13 @@ const rout = {
               obj = enc.enc_msg(msg, [kf.TWOFISH, kf.AES, kf.SERPENT], kf.HMAC);
 
               if(obj && obj.msg && obj.hmac){
-                enc_ta.value = obj.msg;
-                hm_inp.value = obj.hmac;
-                dec_ta.value = obj.dec;
+                enc_ta.innerText = obj.msg;
+                hm_inp.innerText = obj.hmac;
+                dec_ta.innerText = obj.dec;
               } else {
-                enc_ta.value = '';
-                hm_inp.value = '';
-                dec_ta.value = '';
+                enc_ta.innerText = '';
+                hm_inp.innerText = '';
+                dec_ta.innerText = ''
               }
             }
           }),
@@ -284,10 +278,10 @@ const rout = {
           hm_inp,
           dec_ta
         ),
-        h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
+        h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.mb-4.sh-95', {
           type: 'button',
           onclick: function(){
-            let msg = enc_ta.value;
+            let msg = enc_ta.innerText;
 
             if(msg.length < 1){
               return utils.toast('info','no message to send');
@@ -298,11 +292,11 @@ const rout = {
               return utils.toast('info', 'slug cannot be empty')
             }
 
-            if(enc_ta.value === ''){
+            if(enc_ta.innerText === '' || enc_ta.innerText === 'Encrypted text'){
               return utils.toast('info', 'you have no encrypted message to send')
             }
 
-            if(hm_inp.value === ''){
+            if(hm_inp.innerText === '' || hm_inp.innerText === 'Message HMAC'){
               return utils.toast('info', 'invalid HMAC')
             }
 
@@ -311,8 +305,9 @@ const rout = {
               api: kf.UUID,
               method: 'POST',
               body: {
-                ctext: enc_ta.value,
-                hmac: hm_inp.value
+                ctext: enc_ta.innerText,
+                hmac: hm_inp.innerText,
+                date: Date.now()
               }
             }
             // create here
@@ -329,7 +324,7 @@ const rout = {
         }, 'Send Message'),
         import_inp
       ),
-      h('div.col-md-6',
+      h('div.col-lg-6',
         h('div.row',
           tpl.box_c_data('Cryptokey slug', 'SLUG', 'Enter a slug for your Cryptokey'),
           h('div.col-8',
@@ -363,11 +358,11 @@ const rout = {
                   return utils.toast('info', 'slug cannot be empty')
                 }
 
-                if(enc_ta.value === ''){
+                if(enc_ta.innerText === '' || enc_ta.innerText === 'Encrypted text'){
                   return utils.toast('info', 'you have no encrypted message to send')
                 }
 
-                if(hm_inp.value === ''){
+                if(hm_inp.innerText === '' || hm_inp.innerText === 'Message HMAC'){
                   return utils.toast('info', 'invalid HMAC')
                 }
 
@@ -376,8 +371,9 @@ const rout = {
                   api: kf.UUID,
                   method: 'POST',
                   body: {
-                    ctext: enc_ta.value,
-                    hmac: hm_inp.value
+                    ctext: enc_ta.innerText,
+                    hmac: hm_inp.innerText,
+                    date: Date.now()
                   }
                 }
                 // create here
@@ -386,7 +382,7 @@ const rout = {
                     ce(err)
                     kf.UUID = enc.uuidv4();
                     ss.set_enc('keyfile', kf);
-                    cryptokey_inp.value = js(kf);
+                    cryptokey_inp.innerText = js(kf);
                     evt.target.removeAttribute('disabled');
                     return utils.toast('danger', 'unable to create crypto store, try again.')
                   }
@@ -424,7 +420,7 @@ const rout = {
     cl(kf)
 
     let info_div = h('div',
-      tpl.box_info('Slug', kf.slug, 'cryptobox slug'),
+      tpl.box_info('Slug', kf.slug, 'Crypto store slug'),
     ),
     message_div = h('div.list-group list-group-flush')
 
@@ -443,18 +439,47 @@ const rout = {
         return
       }
 
-      res._createdOn = res._createdOn.replace('T', ' ').split('.')[0]
+      if(res._count === 0){
+        info_div.append(
+          tpl.box_info('Message count', res._count, 'Crypto store items'),
+          tpl.box_info('Status', 'Crypto store empty', 'Crypto store status')
+        )
+        return
+      }
+
+      res._createdOn = res._createdOn.replace('T', ' ').split('.')[0];
+      
       info_div.append(
-        tpl.box_info('Message count', res._count, 'cryptobox items'),
-        tpl.box_info('Created', res._createdOn, 'cryptobox items'),
+        tpl.box_info('Message count', res._count, 'Crypto store items'),
+        tpl.box_info('Created', res._createdOn, 'Crypto store items'),
+        tpl.box_info('Status', 'ok', 'Crypto store status')
       )
 
       if(res._updatedOn){
         res._updatedOn = res._updatedOn.replace('T', ' ').split('.')[0]
-         info_div.append(tpl.box_info('Last update', res._updatedOn, 'cryptobox items'));
+         info_div.append(tpl.box_info('Last update', res._updatedOn, 'Crypto store items'));
       }
 
-
+      info_div.append(
+        h('button.btn.btn-block.btn-sm.btn-outline-success.mt-2.sh-95', {
+          type: 'button',
+          onclick: function(evt){
+            utils.add_sp(evt.target, 'Deleting');
+            let kf = ss.get_enc('keyfile');
+            let url = 'https://jsonbox.io/'+ kf.ID + '?q=date:>0';
+            utils.box_del({url: url, api: kf.UUID},function(err,res){
+              if(err){
+                utils.toast('danger', 'Failed to delete messages.');
+                cl(err)
+              } else {
+                utils.toast('success', res.message);
+                utils.emptySync(message_div)
+              }
+              utils.del_sp(evt.target, 'Delete All');
+            })
+          }
+        }, 'Delete All')
+      )
 
       utils.getJSON('https://jsonbox.io/'+ kf.ID, function(err,res){
         if(err){

@@ -9,17 +9,19 @@ const tpl = {
   header: function(){
 
     let lnk_div = h('div.nav.justify-content-end'),
-    arr = ['crypto_key', 'crypto_store', 'crypto_tools', 'about']
+    arr = ['crypto_key', 'crypto_store', 'crypto_tools', 'about'];
 
 
     for (let i = 0; i < arr.length; i++) {
+      let dest = utils.capitalize(utils.un_snake_case(arr[i]));
       lnk_div.append(h('li.nav-item.cp.text-success',
         h('a.nav-link.sh-95', {
           onclick:function(){
-            location.hash = '/'+ arr[i]
+            app.rout({title: dest , dest: arr[i]});
           }
-        }, utils.capitalize(utils.un_snake_case(arr[i])))
+        }, dest)
       ))
+
     }
 
     return h('nav.navbar.navbar-expand-lg.nav_main.fixed-top',
@@ -79,26 +81,40 @@ const tpl = {
   },
   status_bar: function(){
 
-    let online_globe = h('div.globe.mr-2'),
-    db_globe = online_globe.cloneNode(),
+    let online_globe = h('i.icon-wifi.ml-2.ch'),
     db_current = h('span.ml-2'),
     sb = h('div.container-fluid.status-bar',
       h('div.row',
         h('div.col-6',
           h('div.status-left',
-            h('i.icon-trash.text-success.cp.mr-2',{
-              title: 'remove sensitive data',
+            h('i.icon-redo-alt.text-success.cp.mr-2',{
+              title: 'Secure app reload',
               onclick: function(){
                 ss.del('keyfile');
+                app.reload()
               }
             }),
-            h('i.icon-database.text-success'),
+            h('i.icon-trash.text-success.cp.mr-2',{
+              title: 'Click to remove all sensitive data before you leave this site',
+              onclick: function(){
+                ss.del('keyfile');
+                utils.toast('success', 'sensitive data deleted')
+              }
+            }),
+            h('i.icon-database.text-success.ch', {
+              title: 'Current Crypto store',
+            }),
             db_current
           )
         ),
         h('div.col-6',
           h('div.status-right',
-            db_globe,
+            h('i.icon-rss.ml-2.text-success.cp',{
+              title: 'rss',
+              onclick: function(){
+
+              }
+            }),
             online_globe
           )
         )
@@ -141,14 +157,14 @@ const tpl = {
       msg_main
     )
 
-    window.onhashchange = function(){
-
-      let dest = location.hash.slice(2);
-
+    window.addEventListener("rout", function(evt) {
+      evt = evt.detail;
+      history.replaceState(null, "", evt.dest);
       utils.empty(msg_main, function(){
-        rout[dest](msg_main)
+        rout[evt.dest](msg_main)
+        document.title = evt.title;
       })
-    }
+    });
 
     return app_main_base
 
@@ -170,11 +186,7 @@ const tpl = {
       h('div.form-group',
         h('label.w-100.text-success', 'Secret', h('i.icon-eye.float-right.cp', {
           onclick: function(){
-            if(x.type === 'password'){
-              x.type = 'text'
-            } else {
-              x.type = 'password'
-            }
+            x.classList.toggle('sec-txt')
           }
         })),
         x
@@ -182,10 +194,7 @@ const tpl = {
     )
   },
   sec_inp: function(){
-    return h('input.form-control.inp-dark.mb-2.ch',{
-      type: 'password',
-      readOnly: true
-    })
+    return h('sec-inp.form-control.inp-dark.mb-2.sec-txt.ch')
   },
   box_c_info: function(x,y,z){
     return h('div.col-4',
@@ -211,8 +220,9 @@ const tpl = {
     )
   },
   msg_item: function(obj){
+    let lg_item = h('div.list-group-item')
 
-    return h('div.list-group-item',
+    lg_item.append(
       h('div.form-group',
         h('div.row',
           h('div.col-md-6',
@@ -234,28 +244,53 @@ const tpl = {
                 value: obj.is_valid
               })
             )
+          ),
+          h('div.col-md-6',
+            h('div.form-group',
+            h('label.text-success', 'ID'),
+            h('input.form-control.inp-dark.mb-2',{
+              type: 'text',
+              readOnly: true,
+              value: obj._id
+            })
+            )
+          ),
+          h('div.col-md-6',
+            h('div.form-group',
+              h('label.text-success', 'HMAC'),
+              h('input.form-control.inp-dark.mb-2',{
+                type: 'text',
+                readOnly: true,
+                value: obj.hmac
+              })
+            )
           )
         ),
-        h('label.text-success', 'HMAC'),
-        h('input.form-control.inp-dark.mb-2',{
-          type: 'text',
-          readOnly: true,
-          value: obj.hmac
-        }),
-        h('label.text-success', 'Message'),
-        h('textarea.form-control.inp-dark.mb-2',{
-          rows: 5,
-          readOnly: true,
-          value: obj.ctext
+        h('label.text-success', 'Decrypted Message'),
+        h('sec-ta.form-control.inp-dark.mb-2.h-5', {
+          innerText: obj.ctext
         }),
         h('button.btn.btn-sm.btn-outline-success.mt-2.sh-95', {
           type: 'button',
           onclick: function(evt){
-            // obj._id
+            utils.add_sp(evt.target, 'Deleting');
+            let kf = ss.get_enc('keyfile');
+            let url = ['https://jsonbox.io', kf.ID, obj._id].join('/')
+            utils.box_del({url: url, api: kf.UUID},function(err,res){
+              if(err){
+                utils.toast('danger', 'Failed to delete message.');
+                utils.del_sp(evt.target, 'Deleting');
+                return cl(err)
+              }
+              utils.toast('success', res.message);
+              lg_item.remove();
+            })
           }
         }, 'Delete')
       )
     )
+
+    return lg_item
   }
 }
 

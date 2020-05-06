@@ -1,8 +1,9 @@
 import { xcrypt } from './xcrypt.mjs';
 
 const LS = localStorage,
-SS = sessionStorage,
-session_key = xcrypt.generateKey('hex');
+SS = sessionStorage;
+
+let session_key = xcrypt.generateKey('hex');
 
 const ls = {
   get: function(i){

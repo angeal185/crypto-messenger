@@ -12,9 +12,39 @@ import { tpl } from "./tpl.mjs";
 import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
 
+
+
+
 void function(){
-  //ss.del('keyfile');
-  location.hash = '/'
+
+
+  ss.del('keyfile');
+
+  window.addEventListener("rout", function(evt) {
+    cl(evt)
+    history.replaceState(null, "", evt.detail.dest);
+    document.title = evt.detail.title;
+  });
+
+  window.app = {
+    rout: function(obj){
+      let evt = new CustomEvent("rout", {
+        detail: obj
+      });
+      window.dispatchEvent(evt);
+    },
+    reload: function(){
+      history.replaceState(null, "", '/');
+      location.reload();
+    }
+  }
+
+  window.addEventListener('fetch', function(evt){
+    cl('hit')
+  },false)
+
+  Object.freeze(window.app);
+
   window.onload = function(){
 
     let doc = document,
@@ -34,8 +64,7 @@ void function(){
         doc.body.append(tpl.base(doc),h('div.container-fluid', color_picker))
         window.onload = null;
         document.scripts[0].remove();
-        location.hash = '/crypto_key';
-
+        app.rout({title: 'Crypto key', dest: 'crypto_key'})
 
       })
     })

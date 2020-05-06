@@ -5,7 +5,7 @@ import { xcrypt } from './xcrypt.mjs';
 
 const utils = {
   strip_globals: function(win,cb){
-    let arr = ['atob','btoa','eval','alert','prompt','createImageBitmap','confirm','defaultstatus','defaultStatus','EvalError','clientInformation','ondrag','ondragend','ondragenter','ondragleave','ondragover','ondragstart','ondrop','ondurationchange','onemptied','onended','onafterprint','onanimationend','onanimationiteration','onanimationstart','onappinstalled','onauxclick','onbeforeinstallprompt','onbeforeprint','onblur','oncancel','oncanplay','oncanplaythrough','onchange','onclose','oncontextmenu','oncuechange','ondblclick','ondevicemotion','ondeviceorientation','ondeviceorientationabsolute','onfocus','onformdata','ongotpointercapture','prompt','open','opener','oninput','oninvalid','onkeydown','onkeypress','onlanguagechange','onloadstart','onlostpointercapture','onmessage','onmessageerror','onmousedown','onmouseenter','onmouseleave','onmousemove','onmouseout','onmouseover','onmouseup','onmousewheel','onpause','onplay','onplaying','onpointercancel','onpointerdown','onpointerenter','onpointerleave','onpointermove','onpointerout','onpointerover','onpointerrawupdate','onpointerup','onprogress','onratechange','onreset','onsearch','onseeked','onseeking','onselectionchange','onselectstart','onstalled','onsuspend','ontransitionend','onvolumechange','onwaiting','onwheel','queueMicrotask','print','speechSynthesis','stop','close','closed'];
+    let arr = ['atob','btoa','eval','alert','prompt','createImageBitmap','confirm','defaultstatus','defaultStatus','EvalError','clientInformation','ondrag','ondragend','ondragenter','ondragleave','ondragover','ondragstart','ondrop','ondurationchange','onemptied','onended','onafterprint','onanimationend','onanimationiteration','onanimationstart','onappinstalled','onauxclick','onbeforeinstallprompt','onbeforeprint','onblur','oncancel','oncanplay','oncanplaythrough','onchange','onclose','oncontextmenu','oncuechange','ondblclick','ondevicemotion','ondeviceorientation','ondeviceorientationabsolute','onfocus','onformdata','ongotpointercapture','prompt','opener','oninput','oninvalid','onkeydown','onkeypress','onlanguagechange','onloadstart','onlostpointercapture','onmessage','onmessageerror','onmousedown','onmouseenter','onmouseleave','onmousemove','onmouseout','onmouseover','onmouseup','onmousewheel','onpause','onplay','onplaying','onpointercancel','onpointerdown','onpointerenter','onpointerleave','onpointermove','onpointerout','onpointerover','onpointerrawupdate','onpointerup','onprogress','onratechange','onreset','onsearch','onseeked','onseeking','onselectionchange','onselectstart','onstalled','onsuspend','ontransitionend','onvolumechange','onwaiting','onwheel','queueMicrotask','print','speechSynthesis','stop','closed'];
     for (let i = 0; i < arr.length; i++) {
       delete win[arr[i]]
     }
@@ -110,6 +110,32 @@ const utils = {
       cb(err)
     })
   },
+  box_del: function(obj, cb){
+    fetch(obj.url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept-Encoding': 'gzip',
+        'Sec-Fetch-Dest': 'object',
+        'Sec-Fetch-mode': 'cors',
+        'Sec-Fetch-Site': 'cross-site',
+        'x-api-key': obj.api
+      }
+    })
+    .then(function(res){
+      if (res.status >= 200 && res.status < 300) {
+        return res.json();
+      } else {
+        return Promise.reject(new Error(res.statusText))
+      }
+    })
+    .then(function(data) {
+      cb(false, data)
+    })
+    .catch(function(err){
+      cb(err)
+    })
+  },
   mailto: function(subject, email){
     return h('a', {
       href: 'mailto:'+ email +'?subject='+ subject,
@@ -152,31 +178,18 @@ const utils = {
     i.title = d;
   },
   is_online: function(i){
-    utils.globe_change(i,'green','red', 'orange','online')
+    utils.globe_change(i,'text-success','text-danger', 'text-warning','online')
     ss.set('is_online', true)
   },
   is_offline: function(i){
-    utils.globe_change(i,'red','green', 'orange', 'offline')
+    utils.globe_change(i,'text-danger','text-success', 'text-warning', 'offline')
     ss.set('is_online', false)
   },
-  add_spn: function(item, text){
-    item.parentNode.setAttribute('disabled', true);
+  add_sp: function(item, text){
     utils.emptySync(item);
     item.append(h('span.spinner-grow.spinner-grow-sm.mr-1'), text);
   },
-  remove_spn: function(item, text){
-    setTimeout(function(){
-      item.parentNode.removeAttribute('disabled');
-      utils.emptySync(item);
-      item.innerText = text;
-    },1000)
-  },
-  add_sp: function(item, text, cb){
-    utils.emptySync(item);
-    item.append(h('span.spinner-grow.spinner-grow-sm.mr-1'), text);
-    cb()
-  },
-  remove_sp: function(item, text){
+  del_sp: function(item, text){
     setTimeout(function(){
       utils.emptySync(item);
       item.innerText = text;
@@ -287,15 +300,15 @@ const utils = {
     let obj = jp(res);
 
     slug.value = obj.slug
-    id.value = obj.ID;
-    i1.value = obj.UUID;
-    i2.value = obj.TWOFISH;
-    i3.value = obj.AES;
-    i4.value = obj.SERPENT;
-    i5.value = obj.HMAC;
+    id.innerText = obj.ID;
+    i1.innerText = obj.UUID;
+    i2.innerText = obj.TWOFISH;
+    i3.innerText = obj.AES;
+    i4.innerText = obj.SERPENT;
+    i5.innerText = obj.HMAC;
     ss.set_enc('keyfile', obj);
 
-    ki.value = res;
+    ki.innerText = res;
     db_update(obj.slug)
 
   }
