@@ -337,9 +337,9 @@ const rout = {
           tpl.box_c_inp(key_inp_id),
           tpl.box_c_data('Cryptokey token', 'UUID', 'Cryptokey api auth token'),
           tpl.box_c_inp(key_inp_0),
-          tpl.box_c_data('Cipher second round', 'TWOFISH', 'Cipher used for the second round of encryption'),
+          tpl.box_c_data('Cipher first round', 'TWOFISH', 'Cipher used for the first round of encryption'),
           tpl.box_c_inp(key_inp_1),
-          tpl.box_c_data('Cipher third round', 'AES', 'Cipher used for the third round of encryption'),
+          tpl.box_c_data('Cipher second round', 'AES', 'Cipher used for the second round of encryption'),
           tpl.box_c_inp(key_inp_2),
           tpl.box_c_data('Cipher final round', 'SERPENT', 'Cipher used for the final round of encryption'),
           tpl.box_c_inp(key_inp_3),
@@ -448,7 +448,7 @@ const rout = {
       }
 
       res._createdOn = res._createdOn.replace('T', ' ').split('.')[0];
-      
+
       info_div.append(
         tpl.box_info('Message count', res._count, 'Crypto store items'),
         tpl.box_info('Created', res._createdOn, 'Crypto store items'),
