@@ -1,4 +1,5 @@
 import { h } from './h.mjs';
+import { config } from './config.mjs';
 import { tpl } from './tpl.mjs';
 import { utils } from './utils.mjs';
 import { enc } from './enc.mjs';
@@ -263,7 +264,11 @@ const rout = {
             onkeyup: function(evt){
               let kf = ss.get_enc('keyfile'),
               msg = this.value,
-              obj = enc.enc_msg(msg, [kf.TWOFISH, kf.AES, kf.SERPENT], kf.HMAC);
+              obj = enc.enc_msg(msg, [
+                kf[config.crypt_order[0]],
+                kf[config.crypt_order[1]],
+                kf[config.crypt_order[2]]
+              ], kf.HMAC);
 
               if(obj && obj.msg && obj.hmac){
                 enc_ta.innerText = obj.msg;
@@ -339,11 +344,11 @@ const rout = {
           tpl.box_c_inp(key_inp_id),
           tpl.box_c_data('Cryptokey token', 'UUID', 'Cryptokey api auth token'),
           tpl.box_c_inp(key_inp_0),
-          tpl.box_c_data('Cipher first round', 'TWOFISH', 'Cipher used for the first round of encryption'),
+          tpl.box_c_data('Cipher first round', config.crypt_order[0], 'Cipher used for the first round of encryption'),
           tpl.box_c_inp(key_inp_1),
-          tpl.box_c_data('Cipher second round', 'AES', 'Cipher used for the second round of encryption'),
+          tpl.box_c_data('Cipher second round', config.crypt_order[1], 'Cipher used for the second round of encryption'),
           tpl.box_c_inp(key_inp_2),
-          tpl.box_c_data('Cipher final round', 'SERPENT', 'Cipher used for the final round of encryption'),
+          tpl.box_c_data('Cipher final round', config.crypt_order[2], 'Cipher used for the final round of encryption'),
           tpl.box_c_inp(key_inp_3),
           tpl.box_c_data('HMAC', 'SHA3-512', 'Authentication method to detect data tamper'),
           tpl.box_c_inp(key_inp_4),
@@ -491,7 +496,11 @@ const rout = {
         let ptext;
         for (let i = 0; i < res.length; i++) {
 
-          res[i].ctext = enc.dec_txt(res[i].ctext, [kf.TWOFISH, kf.AES, kf.SERPENT], kf.HMAC) || 'invalid'
+          res[i].ctext = enc.dec_txt(res[i].ctext, [
+            kf[config.crypt_order[0]],
+            kf[config.crypt_order[1]],
+            kf[config.crypt_order[2]]
+          ], kf.HMAC) || 'invalid'
 
 
             res[i].is_valid = 'Valid'

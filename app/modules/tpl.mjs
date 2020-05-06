@@ -147,8 +147,7 @@ const tpl = {
 
   },
   app_main: function(dest){
-    let c_order = ['TWOFISH', 'AES', 'SERPENT'],
-    app_main_base = h('div'),
+    let app_main_base = h('div'),
     main_row = h('div.row'),
     msg_main = h('div');
 

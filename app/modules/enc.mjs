@@ -1,6 +1,6 @@
+import { config } from './config.mjs';
 import { xcrypt } from './xcrypt.mjs';
 import  jsSHA  from "./sha.mjs";
-
 
 
 const enc = {
@@ -50,11 +50,12 @@ const enc = {
         slug: '',
         ID: xcrypt.hex_encode(enc.rnd(16)),
         UUID: enc.uuidv4(),
-        TWOFISH: res.substring(0, 64),
-        SERPENT: res.substring(64, 128),
-        AES: res.substring(128, 192),
         HMAC: res.substring(192, 256)
       }
+
+      obj[config.crypt_order[0]] = res.substring(0, 64)
+      obj[config.crypt_order[1]] = res.substring(64, 128)
+      obj[config.crypt_order[2]] = res.substring(128, 192)
 
       cb(false, obj)
     })
@@ -70,7 +71,7 @@ const enc = {
 
       ptext = xcrypt.str2utf8(ptext);
 
-      let final = xcrypt.enc3x(ptext, arr, ['TWOFISH', 'AES', 'SERPENT'], 'hex'),
+      let final = xcrypt.enc3x(ptext, arr, config.crypt_order, 'hex'),
       sha_ob = new jsSHA('SHA3-512', 'UINT8ARRAY');
 
       sha_ob.setHMACKey(hkey, 'HEX');
@@ -79,7 +80,7 @@ const enc = {
       let obj = {
         msg: xcrypt.hex_encode(final),
         hmac: sha_ob.getHMAC('HEX'),
-        dec: xcrypt.utf82str(xcrypt.dec3x(final, arr, ['TWOFISH', 'AES', 'SERPENT'], 'hex'))
+        dec: xcrypt.utf82str(xcrypt.dec3x(final, arr, config.crypt_order, 'hex'))
       };
 
       return obj;
@@ -94,7 +95,7 @@ const enc = {
 
       ctext = xcrypt.hex_decode(ctext)
       cl(ctext)
-      return xcrypt.utf82str(xcrypt.dec3x(ctext, arr, ['TWOFISH', 'AES', 'SERPENT'], 'hex'))
+      return xcrypt.utf82str(xcrypt.dec3x(ctext, arr, config.crypt_order, 'hex'))
 
     } catch (err) {
       ce(err)

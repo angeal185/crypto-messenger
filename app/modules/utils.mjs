@@ -1,5 +1,6 @@
 import { h } from './h.mjs';
 import { tpl } from './tpl.mjs';
+import { config } from './config.mjs';
 import { ls,ss } from "./storage.mjs";
 import { xcrypt } from './xcrypt.mjs';
 
@@ -302,9 +303,9 @@ const utils = {
     slug.value = obj.slug
     id.innerText = obj.ID;
     i1.innerText = obj.UUID;
-    i2.innerText = obj.TWOFISH;
-    i3.innerText = obj.AES;
-    i4.innerText = obj.SERPENT;
+    i2.innerText = obj[config.crypt_order[0]];
+    i3.innerText = obj[config.crypt_order[1]];
+    i4.innerText = obj[config.crypt_order[2]];
     i5.innerText = obj.HMAC;
     ss.set_enc('keyfile', obj);
 
