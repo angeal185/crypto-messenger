@@ -34,8 +34,8 @@ void function(){
       window.dispatchEvent(evt);
     },
     reload: function(){
-      history.replaceState(null, "", '/');
-      location.href = location.href;
+      history.replaceState(null, "", '/crypto-messenger');
+      let url = location.href = location.href
     }
   }
 
