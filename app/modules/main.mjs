@@ -1,0 +1,43 @@
+window.js = JSON.stringify;
+window.jp = JSON.parse;
+window.cl = console.log;
+window.ce = console.error;
+window.wcs = window.crypto.subtle;
+
+import { h } from './h.mjs';
+import { xcrypt } from './xcrypt.mjs';
+import  jsSHA  from "./sha.mjs";
+import { utils } from "./utils.mjs";
+import { tpl } from "./tpl.mjs";
+import { enc } from "./enc.mjs";
+import { ls,ss } from "./storage.mjs";
+
+void function(){
+  //ss.del('keyfile');
+  location.hash = '/'
+  window.onload = function(){
+
+    let doc = document,
+    win = window;
+    utils.strip_globals(win, function(){
+      utils.pre(doc, window, function(err,res){
+        if(err){return cl(err)}
+        let color_picker = h('input.form-control.color-picker.inp-dark.mb-4.mt-4',{
+          type:'color',
+          title: 'theme',
+          value: ls.get('theme') || '#000',
+          onchange: function(evt){
+            ls.set('theme', evt.target.value)
+            utils.ud_theme(doc, evt.target.value)
+          }
+        })
+        doc.body.append(tpl.base(doc),h('div.container-fluid', color_picker))
+        window.onload = null;
+        document.scripts[0].remove();
+        location.hash = '/crypto_key';
+
+
+      })
+    })
+  }
+}()
