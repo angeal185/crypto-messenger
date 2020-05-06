@@ -35,7 +35,7 @@ void function(){
       window.dispatchEvent(evt);
     },
     reload: function(){
-      history.replaceState(null, "", '/');
+      history.replaceState(null, "", config.app_path);
       location.href = config.app_path;
     }
   }
