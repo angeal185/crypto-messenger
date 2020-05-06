@@ -35,7 +35,9 @@ void function(){
     },
     reload: function(){
       history.replaceState(null, "", '/');
-      location.reload();
+      let url = location.href.split('/').slice(0,-1);
+      url = url.join('/');
+      location.href = url;
     }
   }
 

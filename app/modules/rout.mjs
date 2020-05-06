@@ -92,8 +92,10 @@ const rout = {
         cryptokey_inp,
         h('div.input-group.input-group-sm.mt-2.mb-2',
           key_pass,
-          h('div.input-group-append',
-            h('span.input-group-text.inp-dark.text-success', 'AES-256-GCM')
+          h('div.input-group-append.ch',
+            h('span.input-group-text.inp-dark.text-success', {
+              title: 'Keyfile encryption method'
+            }, 'AES-256-GCM')
           )
         ),
         h('button.btn.btn-sm.btn-outline-success.mt-2.sh-95.mr-2', {
