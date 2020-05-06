@@ -4,6 +4,7 @@ window.cl = console.log;
 window.ce = console.error;
 window.wcs = window.crypto.subtle;
 
+import { config } from './config.mjs';
 import { h } from './h.mjs';
 import { xcrypt } from './xcrypt.mjs';
 import  jsSHA  from "./sha.mjs";
@@ -34,8 +35,8 @@ void function(){
       window.dispatchEvent(evt);
     },
     reload: function(){
-      history.replaceState(null, "", '/crypto-messenger');
-      let url = location.href = location.href
+      history.replaceState(null, "", '/');
+      location.href = config.app_path;
     }
   }
 
