@@ -3,6 +3,7 @@ import { tpl } from './tpl.mjs';
 import { config } from './config.mjs';
 import { ls,ss } from "./storage.mjs";
 import { xcrypt } from './xcrypt.mjs';
+import { cnsl } from './cnsl.mjs';
 
 const utils = {
   strip_globals: function(win,cb){
@@ -10,6 +11,7 @@ const utils = {
     for (let i = 0; i < arr.length; i++) {
       delete win[arr[i]]
     }
+    cnsl(['[task:strip] ', 'stripping dangerous or unused globals...'], ['lime','cyan']);
     cb()
   },
   pre: function(doc, win, cb){
@@ -25,21 +27,42 @@ const utils = {
   },
   add_styles: function(doc, styl){
     utils.fetchJSON('./app/data/styles.json', function(err,res){
-      if(err){return cl(err)}
-      let sheet = new CSSStyleSheet();
-      sheet.replaceSync(res.main);
-      let theme = ls.get('growlithe');
-      if(theme){
-        sheet.deleteRule(0)
-        sheet.insertRule(':root{--gr:'+ theme +'!important;}',0)
+      if(err){
+        cnsl(['[task:styles] ', 'Styles failed to fetch'], ['red','magenta']);
+        return ce(err)
       }
-      doc.adoptedStyleSheets = [sheet];
-      return;
+      let theme = ls.get('growlithe');
+      try {
+        let sheet = new CSSStyleSheet();
+        sheet.replaceSync(res.main);
+        if(theme){
+          sheet.deleteRule(0)
+          sheet.insertRule(':root{--gr:'+ theme +'!important;}',0)
+        }
+        doc.adoptedStyleSheets = [sheet];
+      } catch (err) {
+        //fallback for shit browsers
+        cnsl(['[task:styles] ', 'outdated browser detected, loading fallback styles...'], ['orange','cyan']);
+        let s = doc.createElement('link');
+        s.type = 'text/css';
+        s.rel = 'stylesheet';
+        s.href = URL.createObjectURL(new Blob([res.main], {type : 'text/css'}));
+        doc.head.appendChild(s);
+        doc.adoptedStyleSheets = [s.sheet];
+        if(theme){
+          setTimeout(function(){
+            doc.adoptedStyleSheets[0].deleteRule(0)
+            doc.adoptedStyleSheets[0].insertRule(':root{--gr:'+ theme +'!important;}',0)
+          },2000)
+        }
+      }
+
     })
   },
   ud_theme: function(doc, r){
     doc.adoptedStyleSheets[0].deleteRule(0)
     doc.adoptedStyleSheets[0].insertRule(':root{--gr:'+ r +'!important;}',0)
+    cnsl(['[task:theme] ', 'updating theme...'], ['lime','cyan']);
   },
   add_font: function(obj, doc){
     let buff = new Uint8Array(xcrypt.base64_decode(obj.data)).buffer;
@@ -49,7 +72,7 @@ const utils = {
     }).load().then(function(res) {
       doc.fonts.add(res);
     }).catch(function(err) {
-      cl(obj.path +' failed to load')
+      cnsl(['[task:fonts] ', obj.name +' failed to load.'], ['red','cyan']);
     });
   },
   shuffle: function(arr) {
@@ -159,14 +182,6 @@ const utils = {
     .catch(function(err){
       cb(err)
     })
-  },
-  mailto: function(subject, email){
-    return h('a', {
-      href: 'mailto:'+ email +'?subject='+ subject,
-      onclick: function(){
-        return false;
-      }
-    }, email)
   },
   fix_date: function(i){
     return i.replace('T', ' ').split('.')[0];
@@ -313,6 +328,7 @@ const utils = {
         a.download = filename;
         document.body.appendChild(a);
         a.click();
+        cnsl(['[task:export] ', 'attempting to export '+ filename], ['blue','cyan']);
         setTimeout(function() {
             window.URL.revokeObjectURL(url);
             a.remove();

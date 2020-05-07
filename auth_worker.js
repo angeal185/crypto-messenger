@@ -98,7 +98,6 @@ onmessage = function(evt) {
   if(evt.isTrusted && evt.userActivation === null){
     let data = evt.data;
     if(data.type === 'verify'){
-      cl('testing site file integrity...')
       utils.verify(function(res){
         if(!res || typeof res !== 'object'){
           return postMessage({
@@ -123,6 +122,11 @@ onmessage = function(evt) {
     }
   } else {
     ce('untrusted worker event blocked')
+    postMessage({
+      type: 'cnsl',
+      col: ['red',''],
+      msg: 'Site file integrity pass'
+    });
   }
 
 };

@@ -495,7 +495,7 @@ const rout = {
             utils.box_del({url: url, api: kf.UUID},function(err,res){
               if(err){
                 utils.toast('danger', 'Failed to delete messages.');
-                cl(err)
+                ce(err)
               } else {
                 utils.toast('success', res.message);
                 utils.emptySync(message_div)

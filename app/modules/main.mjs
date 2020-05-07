@@ -14,8 +14,6 @@ import { tpl } from "./tpl.mjs";
 import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
 
-
-
 void function(){
   ss.del('charmander');
   ss.del('lapras');
@@ -39,12 +37,11 @@ void function(){
     },
     auth_init: function(){
 
-
       let does_exist = ls.set('pikachu');
       if(!does_exist || typeof does_exist !== 'number' || does_exist < Date.now()){
 
         let auth_worker = new Worker(config.auth_worker.src);
-
+        cnsl(['[auth:worker] ', 'auth worker listening...'], ['lime','cyan']);
         auth_worker.onmessage = function(evt) {
           if(evt.isTrusted && evt.userActivation === null){
             let data = evt.data;
@@ -53,7 +50,6 @@ void function(){
                 utils.toast('danger', data.msg)
                 cnsl(['[auth:worker] ', data.msg], ['red','orange']);
               } else {
-                cl(data.msg);
                 cnsl(['[auth:worker] ', data.msg], ['lime','cyan']);
                 ls.set('pikachu', Date.now() + config.auth_worker.interval);
               }
@@ -66,7 +62,8 @@ void function(){
           return;
         }
 
-        auth_worker.postMessage({type: 'verify'});
+        cnsl(['[auth:worker] ', 'testing site file integrity...'], ['blue','cyan']);
+        //auth_worker.postMessage({type: 'verify'});
       } else {
         cnsl(['[auth:worker] ', ' Site file integrity pass'], ['lime','cyan']);
       }
@@ -97,7 +94,9 @@ void function(){
         window.onload = null;
         document.scripts[0].remove();
         app.rout({title: 'Crypto key', dest: 'crypto_key'})
-        //app.auth_init();
+        cnsl(['[task:app] ', 'app load success, starting background tasks...'], ['lime','cyan']);
+
+        app.auth_init();
       })
     })
   }
