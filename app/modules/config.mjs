@@ -5,7 +5,7 @@ const config = {
   email: 'xcrypto-cryptomail@protonmail.ch',
   rss: 'https://cdn.jsdelivr.net/gh/angeal185/crypto-messenger/rss/news.xml',
   auth_worker: {
-    src: [location.href, 'auth_worker.js'].join('/'),
+    src: location.href + 'auth_worker.js',
     interval: 10800000
   }
 }
