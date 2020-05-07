@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+
+    <title>Crypto messenger news feed</title>
+    <description>Anonymous end to end cascade encrypted messenger</description>
+    <link>https://angeal185.github.io/crypto-messenger</link>
+    <category>encryption</category>
+    <copyright>Copyright 2020 Ben eaves</copyright>
+    <docs></docs>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 19 Oct 2020 13:39:14 -0400</lastBuildDate>
+    <managingEditor>xcrypto-cryptomail@protonmail.ch</managingEditor>
+    <pubDate>Tue, 19 Oct 2020 13:38:55 -0400</pubDate>
+    <webMaster>xcrypto-cryptomail@protonmail.ch</webMaster>
+    <generator>crypto-messenger</generator>
+
+    <item>
+      <title>test title</title>
+      <description>test description</description>
+      <link>https://angeal185.github.io/crypto-messenger/</link>
+      <category>encryption/news</category>
+      <comments></comments>
+      <pubDate>Tue, 19 Oct 2020 11:09:11 -0400</pubDate>
+    </item>
+
+  </channel>
+</rss>

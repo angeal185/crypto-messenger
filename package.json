@@ -1,7 +1,7 @@
 {
   "name": "crypto-messenger",
   "version": "1.0.0",
-  "description": "",
+  "description": "Anonymous cascade encrypted messenger",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,9 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/angeal185/crypto-messenger.git"
   },
-  "keywords": [],
+  "keywords": ["serpent","aes","twofish","cascade-encryption","multiple-encryption","messenger","anonymous","encryption","encryption-tool"],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/angeal185/crypto-messenger/issues"
   },

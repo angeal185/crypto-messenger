@@ -3,6 +3,7 @@ import { utils } from './utils.mjs';
 import { ls,ss } from "./storage.mjs";
 import { xcrypt } from './xcrypt.mjs';
 import { enc } from './enc.mjs';
+import { config } from './config.mjs';
 import { rout } from './rout.mjs';
 
 const tpl = {
@@ -112,7 +113,7 @@ const tpl = {
             h('i.icon-rss.ml-2.text-success.cp',{
               title: 'rss',
               onclick: function(){
-
+                window.open(config.rss)
               }
             }),
             online_globe

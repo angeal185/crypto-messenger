@@ -13,9 +13,6 @@ import { tpl } from "./tpl.mjs";
 import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
 
-
-
-
 void function(){
 
 
