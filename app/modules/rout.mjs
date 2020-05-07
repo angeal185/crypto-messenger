@@ -529,14 +529,20 @@ const rout = {
           ss.set_enc('lapras', res)
           for (let i = 0; i < res.length; i++) {
 
-            res[i].ctext = enc.dec_txt(res[i].ctext, [
+            let dec_data = enc.dec_txt(res[i].ctext, [
               kf[config.crypt_order[0]],
               kf[config.crypt_order[1]],
               kf[config.crypt_order[2]]
-            ], kf.HMAC) || 'invalid'
+            ], kf.HMAC)
 
+            res[i].ptext = dec_data.ptext
 
+            if(dec_data.hmac === res[i].hmac){
               res[i].is_valid = 'Valid'
+            } else {
+              res[i].is_valid = 'invalid'
+            }
+
 
             message_div.append(tpl.msg_item(res[i]))
 

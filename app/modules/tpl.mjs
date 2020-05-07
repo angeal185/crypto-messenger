@@ -298,7 +298,7 @@ const tpl = {
         ),
         h('label.text-success', 'Decrypted Message'),
         h('sec-ta.form-control.inp-dark.mb-2.h-5', {
-          textContent: obj.ctext
+          textContent: obj.ptext
         }),
         h('button.btn.btn-sm.btn-outline-success.mt-2.sh-95', {
           type: 'button',

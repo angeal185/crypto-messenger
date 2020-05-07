@@ -90,12 +90,21 @@ const enc = {
       return undefined;
     }
   },
-  dec_txt: function(ctext, arr){
+  dec_txt: function(ctext, arr, hkey){
     try {
 
       ctext = xcrypt.hex_decode(ctext)
-      cl(ctext)
-      return xcrypt.utf82str(xcrypt.dec3x(ctext, arr, config.crypt_order, 'hex'))
+
+      let sha_ob = new jsSHA('SHA3-512', 'UINT8ARRAY');
+
+      sha_ob.setHMACKey(hkey, 'HEX');
+      sha_ob.update(ctext);
+      sha_ob.getHMAC('HEX');
+
+      return {
+        ptext: xcrypt.utf82str(xcrypt.dec3x(ctext, arr, config.crypt_order, 'hex')),
+        hmac: sha_ob.getHMAC('HEX')
+      }
 
     } catch (err) {
       ce(err)
