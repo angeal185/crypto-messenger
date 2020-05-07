@@ -93,7 +93,9 @@ void function(){
             utils.ud_theme(doc, evt.target.value)
           }
         })
-        doc.body.append(tpl.base(doc),h('div.container-fluid', color_picker))
+        doc.body.append(tpl.base(doc),h('div.container-fluid', color_picker),h('div#toast.alert.alert-success', {
+            role: "alert"
+        }, 'test'))
         window.onload = null;
         document.scripts[0].remove();
         app.rout({title: 'Crypto key', dest: 'crypto_key'})

@@ -460,6 +460,7 @@ const rout = {
     utils.getJSON('https://jsonbox.io/_meta/'+ kf.ID, function(err,res){
       if(err){
         ce(err)
+        utils.toast('danger', 'failed to fetch Crypto store data')
         return
       }
 

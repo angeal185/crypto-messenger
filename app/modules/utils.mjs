@@ -13,7 +13,7 @@ const utils = {
     cb()
   },
   pre: function(doc, win, cb){
-    utils.getJSON('./app/data/fonts.json', function(err,res){
+    utils.fetchJSON('./app/data/fonts.json', function(err,res){
       if(err){return cb(err)}
       for (let i = 0; i < res.length; i++) {
         utils.add_font(res[i], doc);
@@ -24,7 +24,7 @@ const utils = {
     })
   },
   add_styles: function(doc, styl){
-    utils.getJSON('./app/data/styles.json', function(err,res){
+    utils.fetchJSON('./app/data/styles.json', function(err,res){
       if(err){return cl(err)}
       let sheet = new CSSStyleSheet();
       sheet.replaceSync(res.main);
@@ -55,16 +55,13 @@ const utils = {
   shuffle: function(arr) {
     return arr.sort(() => Math.random() - 0.5);
   },
-  getJSON: function(url, cb){
+  fetchJSON: function(url, cb){
     fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'Accept-Encoding': 'gzip',
-        'Sec-Fetch-Dest': 'object',
-        'Sec-Fetch-mode': 'cors',
-        'Sec-Fetch-Site': 'cross-site',
-        'Cache-Control': 'max-age=180'
+        'Cache-Control': 'no-cache'
       }
     })
     .then(function(res){
@@ -75,9 +72,33 @@ const utils = {
       }
     })
     .then(function(data) {
-      if(data.status === 'ok'){
+      cb(false, data)
+    })
+    .catch(function(err){
+      cb(err)
+    })
+  },
+  getJSON: function(url, cb){
 
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept-Encoding': 'gzip',
+        'Sec-Fetch-Dest': 'object',
+        'Sec-Fetch-mode': 'cors',
+        'Sec-Fetch-Site': 'cross-site',
+        'Cache-Control': 'no-store'
       }
+    })
+    .then(function(res){
+      if (res.status >= 200 && res.status < 300) {
+        return res.json();
+      } else {
+        return Promise.reject(new Error(res.statusText))
+      }
+    })
+    .then(function(data) {
       cb(false, data)
     })
     .catch(function(err){
@@ -89,6 +110,7 @@ const utils = {
       method: obj.method,
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
         'Accept-Encoding': 'gzip',
         'Sec-Fetch-Dest': 'object',
         'Sec-Fetch-mode': 'cors',
@@ -116,6 +138,7 @@ const utils = {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
         'Accept-Encoding': 'gzip',
         'Sec-Fetch-Dest': 'object',
         'Sec-Fetch-mode': 'cors',
