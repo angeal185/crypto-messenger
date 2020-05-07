@@ -7,7 +7,8 @@ const config = {
   auth_worker: {
     src: location.href + 'auth_worker.js',
     interval: 10800000
-  }
+  },
+  hash: 'SHA3-512'
 }
 
 

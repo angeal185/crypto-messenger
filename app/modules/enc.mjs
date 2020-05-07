@@ -72,7 +72,7 @@ const enc = {
       ptext = xcrypt.str2utf8(ptext);
 
       let final = xcrypt.enc3x(ptext, arr, config.crypt_order, 'hex'),
-      sha_ob = new jsSHA('SHA3-512', 'UINT8ARRAY');
+      sha_ob = new jsSHA(config.hash, 'UINT8ARRAY');
 
       sha_ob.setHMACKey(hkey, 'HEX');
       sha_ob.update(final);
@@ -95,7 +95,7 @@ const enc = {
 
       ctext = xcrypt.hex_decode(ctext)
 
-      let sha_ob = new jsSHA('SHA3-512', 'UINT8ARRAY');
+      let sha_ob = new jsSHA(config.hash, 'UINT8ARRAY');
 
       sha_ob.setHMACKey(hkey, 'HEX');
       sha_ob.update(ctext);
@@ -122,7 +122,7 @@ const enc = {
   },
   aes_gcm: function(password, data, mode, cb){
 
-    let shaObj = new jsSHA("SHA3-512", "TEXT", { encoding: "UTF8" }),
+    let shaObj = new jsSHA(config.hash, "TEXT", { encoding: "UTF8" }),
     iv;
 
     shaObj.update(password);

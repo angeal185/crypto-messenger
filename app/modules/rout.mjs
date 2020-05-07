@@ -371,7 +371,7 @@ const rout = {
           tpl.box_c_inp(key_inp_2),
           tpl.box_c_data('Cipher final round', config.crypt_order[2], 'Cipher used for the final round of encryption'),
           tpl.box_c_inp(key_inp_3),
-          tpl.box_c_data('HMAC', 'SHA3-512', 'Authentication method to detect data tamper'),
+          tpl.box_c_data('HMAC', config.hash, 'Authentication method to detect data tamper'),
           tpl.box_c_inp(key_inp_4),
           tpl.box_c_info('Mode', 'CBC', 'Block mode used by all ciphers'),
           tpl.box_c_info('Bits', '256 * 4', '256 bit encryption used by all ciphers'),
