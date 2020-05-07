@@ -67,7 +67,9 @@ const utils = {
     })
   },
   verify: function(cb){
-    utils.get({url: 'https://glcdn.rawgit.org/angeal185/auth/master/crypto-messenger/hash.json', encode: 'json'}, function(err,res){
+    //let url = 'https://glcdn.rawgit.org/angeal185/auth/master/crypto-messenger/hash.json'
+    let url = './app/data/hash.json'
+    utils.get({url: url, encode: 'json'}, function(err,res){
       if(err){return cb(undefined)}
       //return utils.build();
       let len = res.length,
