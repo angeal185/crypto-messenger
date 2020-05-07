@@ -279,8 +279,8 @@ const utils = {
       if(err){return str;}
     }
   },
- fs_write: function(data, filename){
-    var file = new Blob([data], {type: 'text/plain;charset=utf-8'});
+ fs_write: function(data, filename, ctype){
+    var file = new Blob([data], {type: ctype +';charset=utf-8'});
     if (window.navigator.msSaveOrOpenBlob){
         window.navigator.msSaveOrOpenBlob(file, filename);
     } else {

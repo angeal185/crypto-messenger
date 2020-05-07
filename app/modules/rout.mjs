@@ -57,8 +57,15 @@ const rout = {
     import_inp = h('input.hidden', {type: 'file'}),
     export_key = h('small.float-right.cp.sh-95', {
       onclick: function(){
-        let data = cryptokey_inp.textContent;
-        utils.fs_write(data, 'cryptokey')
+        let data = cryptokey_inp.textContent,
+        ctype;
+        try {
+          data = js(jp(data));
+          ctype = 'application/json'
+        } catch (err) {
+          ctype = 'text/plain'
+        }
+        utils.fs_write(data, 'cryptokey', ctype)
       }
     }, 'Export Cryptokey'),
     new_key = h('small.float-right.cp.sh-95', {
@@ -486,31 +493,49 @@ const rout = {
               utils.del_sp(evt.target, 'Delete All');
             })
           }
-        }, 'Delete All')
+        }, 'Delete All'),
+        h('button.btn.btn-block.btn-sm.btn-outline-success.mt-2.sh-95', {
+          type: 'button',
+          onclick: function(evt){
+            utils.add_sp(evt.target, 'Exporting Store');
+            let data = ss.get_enc('lapras');
+            if(!data || typeof data !== 'object'){
+              utils.toast('info', 'No data to export');
+            } else {
+              utils.fs_write(js(data), kf.slug, 'application/json');
+            }
+            utils.del_sp(evt.target, 'Export Store');
+          }
+        }, 'Export Store')
       )
 
       utils.getJSON('https://jsonbox.io/'+ kf.ID, function(err,res){
-        if(err){
+        if(err || !res){
           ce(err)
           return
         }
-        let ptext;
-        for (let i = 0; i < res.length; i++) {
+        let len = res.length,
+        ptext;
+        if(len > 0){
+          ss.set_enc('lapras', res)
+          for (let i = 0; i < res.length; i++) {
 
-          res[i].ctext = enc.dec_txt(res[i].ctext, [
-            kf[config.crypt_order[0]],
-            kf[config.crypt_order[1]],
-            kf[config.crypt_order[2]]
-          ], kf.HMAC) || 'invalid'
+            res[i].ctext = enc.dec_txt(res[i].ctext, [
+              kf[config.crypt_order[0]],
+              kf[config.crypt_order[1]],
+              kf[config.crypt_order[2]]
+            ], kf.HMAC) || 'invalid'
 
 
-            res[i].is_valid = 'Valid'
+              res[i].is_valid = 'Valid'
 
-          message_div.append(tpl.msg_item(res[i]))
+            message_div.append(tpl.msg_item(res[i]))
 
+          }
+        } else {
+          ss.del('lapras')
         }
 
-        cl(res)
       })
     })
 
@@ -520,7 +545,7 @@ const rout = {
     dest.append(h('p','crypto_tools'))
   },
   about: function(dest){
-    dest.append(h('p','about'))
+    dest.append(h('p','silence is golden'))
   }
 }
 
