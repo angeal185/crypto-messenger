@@ -19,9 +19,7 @@ void function(){
   ss.del('lapras');
 
   window.addEventListener("rout", function(evt) {
-    cl(evt)
     history.replaceState(null, "", evt.detail.dest);
-    document.title = evt.detail.title;
   });
 
   window.app = {
