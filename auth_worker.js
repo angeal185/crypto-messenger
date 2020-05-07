@@ -92,6 +92,7 @@ const utils = {
   }
 }
 
+let cnsl;
 
 onmessage = function(evt) {
 
@@ -121,11 +122,9 @@ onmessage = function(evt) {
       })
     }
   } else {
-    ce('untrusted worker event blocked')
     postMessage({
-      type: 'cnsl',
-      col: ['red',''],
-      msg: 'Site file integrity pass'
+      type: 'error',
+      msg: 'untrusted worker event blocked'
     });
   }
 

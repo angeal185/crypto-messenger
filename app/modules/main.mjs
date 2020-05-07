@@ -53,6 +53,8 @@ void function(){
                 cnsl(['[auth:worker] ', data.msg], ['lime','cyan']);
                 ls.set('pikachu', Date.now() + config.auth_worker.interval);
               }
+            } else if(data.type === 'error'){
+              cnsl(['[auth:worker] ', data.msg], ['red','orange']);
             }
           } else {
             cnsl(['[auth:worker] ', 'untrusted worker event blocked'], ['red','orange']);
