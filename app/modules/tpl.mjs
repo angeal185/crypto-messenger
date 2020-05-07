@@ -91,14 +91,14 @@ const tpl = {
             h('i.icon-redo-alt.text-success.cp.mr-2',{
               title: 'Secure app reload',
               onclick: function(){
-                ss.del('keyfile');
+                ss.del('charmander');
                 app.reload()
               }
             }),
             h('i.icon-trash.text-success.cp.mr-2',{
               title: 'Click to remove all sensitive data before you leave this site',
               onclick: function(){
-                ss.del('keyfile');
+                ss.del('charmander');
                 utils.toast('success', 'sensitive data deleted')
               }
             }),
@@ -110,6 +110,12 @@ const tpl = {
         ),
         h('div.col-6',
           h('div.status-right',
+            h('i.icon-envelope.ml-2.text-success.cp',{
+              title: 'contact',
+              onclick: function(){
+                window.open(config.rss)
+              }
+            }),
             h('i.icon-rss.ml-2.text-success.cp',{
               title: 'rss',
               onclick: function(){
@@ -130,7 +136,7 @@ const tpl = {
     }
 
     window.db_update = function(i){
-      db_current.innerText = i;
+      db_current.textContent = i;
     }
 
     window.addEventListener('online',  function(){
@@ -268,13 +274,13 @@ const tpl = {
         ),
         h('label.text-success', 'Decrypted Message'),
         h('sec-ta.form-control.inp-dark.mb-2.h-5', {
-          innerText: obj.ctext
+          textContent: obj.ctext
         }),
         h('button.btn.btn-sm.btn-outline-success.mt-2.sh-95', {
           type: 'button',
           onclick: function(evt){
             utils.add_sp(evt.target, 'Deleting');
-            let kf = ss.get_enc('keyfile');
+            let kf = ss.get_enc('charmander');
             let url = ['https://jsonbox.io', kf.ID, obj._id].join('/')
             utils.box_del({url: url, api: kf.UUID},function(err,res){
               if(err){

@@ -28,7 +28,7 @@ const utils = {
       if(err){return cl(err)}
       let sheet = new CSSStyleSheet();
       sheet.replaceSync(res.main);
-      let theme = ls.get('theme');
+      let theme = ls.get('growlithe');
       if(theme){
         sheet.deleteRule(0)
         sheet.insertRule(':root{--gr:'+ theme +'!important;}',0)
@@ -180,11 +180,11 @@ const utils = {
   },
   is_online: function(i){
     utils.globe_change(i,'text-success','text-danger', 'text-warning','online')
-    ss.set('is_online', true)
+    ss.set('voltorb', true)
   },
   is_offline: function(i){
     utils.globe_change(i,'text-danger','text-success', 'text-warning', 'offline')
-    ss.set('is_online', false)
+    ss.set('voltorb', false)
   },
   add_sp: function(item, text){
     utils.emptySync(item);
@@ -193,7 +193,7 @@ const utils = {
   del_sp: function(item, text){
     setTimeout(function(){
       utils.emptySync(item);
-      item.innerText = text;
+      item.textContent = text;
     },1000)
   },
   toast: function(i, msg){
@@ -301,15 +301,15 @@ const utils = {
     let obj = jp(res);
 
     slug.value = obj.slug
-    id.innerText = obj.ID;
-    i1.innerText = obj.UUID;
-    i2.innerText = obj[config.crypt_order[0]];
-    i3.innerText = obj[config.crypt_order[1]];
-    i4.innerText = obj[config.crypt_order[2]];
-    i5.innerText = obj.HMAC;
-    ss.set_enc('keyfile', obj);
+    id.textContent = obj.ID;
+    i1.textContent = obj.UUID;
+    i2.textContent = obj[config.crypt_order[0]];
+    i3.textContent = obj[config.crypt_order[1]];
+    i4.textContent = obj[config.crypt_order[2]];
+    i5.textContent = obj.HMAC;
+    ss.set_enc('charmander', obj);
 
-    ki.innerText = res;
+    ki.textContent = res;
     db_update(obj.slug)
 
   }
