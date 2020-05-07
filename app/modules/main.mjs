@@ -18,6 +18,7 @@ import { ls,ss } from "./storage.mjs";
 
 void function(){
   ss.del('charmander');
+  ss.del('lapras');
 
   window.addEventListener("rout", function(evt) {
     cl(evt)

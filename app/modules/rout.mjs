@@ -426,6 +426,15 @@ const rout = {
       )
     )
 
+    let cdata = ss.get_enc('charmander');
+    if(cdata && typeof cdata === 'object'){
+      utils.add_data(
+        js(cdata), key_inp_slug, key_inp_id, key_inp_0,
+        key_inp_1, key_inp_2, key_inp_3, key_inp_4,
+        cryptokey_inp
+      )
+    }
+
     dest.append(create_cipherkey)
 
   },
@@ -508,7 +517,7 @@ const rout = {
           }
         }, 'Export Store')
       )
-      
+
       utils.getJSON('https://jsonbox.io/'+ kf.ID, function(err,res){
         if(err || !res){
           ce(err)
