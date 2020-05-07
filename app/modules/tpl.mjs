@@ -13,17 +13,41 @@ const tpl = {
     arr = ['crypto_key', 'crypto_store', 'crypto_tools', 'about'];
 
 
-    for (let i = 0; i < arr.length; i++) {
-      let dest = utils.capitalize(utils.un_snake_case(arr[i]));
-      lnk_div.append(h('li.nav-item.cp.text-success',
+    lnk_div.append(
+      h('li.nav-item.cp.text-success',
         h('a.nav-link.sh-95', {
           onclick:function(){
-            app.rout({title: dest , dest: arr[i]});
+            app.rout({title: 'Crypto key' , dest: 'crypto_key'});
           }
-        }, dest)
-      ))
+        }, 'Crypto key')
+      ),
+      h('li.nav-item.cp.text-success',
+        h('a.nav-link.sh-95', {
+          onclick:function(){
+            let kf = ss.get_enc('charmander');
+            if(!kf || typeof kf !== 'object' || !kf.slug || kf.slug === ''){
+              return utils.toast('info','No cryptokey has been set')
+            }
+            app.rout({title: 'Crypto store' , dest: 'crypto_store'});
+          }
+        }, 'Crypto store')
+      ),
+      h('li.nav-item.cp.text-success',
+        h('a.nav-link.sh-95', {
+          onclick:function(){
+            app.rout({title: 'Crypto tools' , dest: 'crypto_tools'});
+          }
+        }, 'Crypto tools')
+      ),
+      h('li.nav-item.cp.text-success',
+        h('a.nav-link.sh-95', {
+          onclick:function(){
+            app.rout({title: 'About' , dest: 'about'});
+          }
+        }, 'About')
+      )
+    )
 
-    }
 
     return h('nav.navbar.navbar-expand-lg.nav_main.fixed-top',
       h('div.row.w-100',
@@ -111,9 +135,9 @@ const tpl = {
         h('div.col-6',
           h('div.status-right',
             h('i.icon-envelope.ml-2.text-success.cp',{
-              title: 'contact',
+              title: config.email,
               onclick: function(){
-                window.open(config.rss)
+                window.open('mailto:'+ config.email +'?subject=contact')
               }
             }),
             h('i.icon-rss.ml-2.text-success.cp',{

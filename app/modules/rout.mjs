@@ -419,19 +419,6 @@ const rout = {
       )
     )
 
-    /*
-    enc.create_cipherkey_data(function(err,res){
-      if(err){dest.append(h('h5.text-danger', 'failed to create crypto key data'))}
-
-      utils.add_data(
-        js(res), key_inp_slug, key_inp_id, key_inp_0,
-        key_inp_1, key_inp_2, key_inp_3, key_inp_4,
-        key_inp_5, cryptokey_inp
-      )
-
-
-    })
-*/
     dest.append(create_cipherkey)
 
   },

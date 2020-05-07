@@ -37,6 +37,8 @@ void function(){
       location.href = config.app_path;
     },
     auth_init: function(){
+
+
       let does_exist = ls.set('pikachu');
       if(!does_exist || typeof does_exist !== 'number' || does_exist < Date.now()){
 
@@ -94,7 +96,7 @@ void function(){
         window.onload = null;
         document.scripts[0].remove();
         app.rout({title: 'Crypto key', dest: 'crypto_key'})
-        app.auth_init();
+        //app.auth_init();
       })
     })
   }
