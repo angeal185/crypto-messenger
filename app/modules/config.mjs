@@ -12,6 +12,4 @@ const config = {
   hash: 'SHA3-512'
 }
 
-
-
 export { config }

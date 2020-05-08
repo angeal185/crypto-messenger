@@ -78,10 +78,7 @@ function h() {
           if (/^on\w+/.test(k)) {
             (function(k, l) {
               if (e.addEventListener) {
-                e.addEventListener(k.substring(2), l[k], false)
-                cleanupFuncs.push(function() {
-                  e.removeEventListener(k.substring(2), l[k], false)
-                })
+                e[k] = l[k];
               } else {
                 e.attachEvent(k, l[k])
                 cleanupFuncs.push(function() {

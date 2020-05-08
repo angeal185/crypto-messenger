@@ -140,7 +140,6 @@ const enc = {
           data = Uint8Array.from(xcrypt.str2utf8(data));
           wcs.encrypt({name: "AES-GCM",iv: iv,tagLength: 128},ekey,data)
           .then(function(encrypted){
-            cl(xcrypt.hex_encode(iv).length)
             let ctext = xcrypt.pack(xcrypt.hex_encode(iv) + xcrypt.hex_encode(new Uint8Array(encrypted)));
             cb(false, ctext);
           })
@@ -149,20 +148,15 @@ const enc = {
           });
 
         } else if(mode === 'dec'){
-          //decrypt
-
           iv = Uint8Array.from(xcrypt.hex_decode(data.slice(0,24)));
           data = Uint8Array.from(xcrypt.hex_decode(data.slice(24)));
           wcs.decrypt({name: "AES-GCM",iv: iv,tagLength: 128},ekey,data)
           .then(function(decrypted){
-            cl(xcrypt.utf82str(new Uint8Array(decrypted)))
             cb(false, xcrypt.utf82str(new Uint8Array(decrypted)));
           })
           .catch(function(err){
-
             ce(err);
           });
-
         }
       })
       .catch(function(err){

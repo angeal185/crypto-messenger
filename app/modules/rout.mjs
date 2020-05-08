@@ -78,9 +78,13 @@ const rout = {
       }
     }, 'New Cryptokey'),
     key_pass = h('input.form-control.inp-dark', {
-      type: 'password',
       autocomplete: 'new-password',
-      placeholder: 'Enter keyfile password'
+      placeholder: 'Enter keyfile password',
+      onkeyup: function(evt){
+        this.type = 'password';
+        this.placeholder = '';
+        this.onkeyup = null;
+      }
     }),
     create_cipherkey = h('div.row',
       h('div.col-lg-6',
@@ -412,7 +416,7 @@ const rout = {
                     evt.target.removeAttribute('disabled');
                     return utils.toast('danger', 'unable to create crypto store, try again.')
                   }
-                  cl(res)
+              
                   utils.toast('success', "crypto store created. Export your keyfile");
                   return
                 });

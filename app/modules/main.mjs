@@ -1,3 +1,16 @@
+if(!window.fetch || !window.crypto || !window.crypto.subtle || !window.localStorage){
+  window.import = null
+  let msg = 'Application terminated due to security risk. Your browser is obsolete and a security risk. It is not and will not be supported. ',
+  arr = 'Have a nice day!'.split('');
+  alert(msg);
+  for (let i = 0; i < arr.length; i++) {
+    setTimeout(function (){
+      document.body.innerHTML += arr[i];
+    }, i*250)
+  }
+  throw new Error(msg)
+}
+
 window.js = JSON.stringify;
 window.jp = JSON.parse;
 window.cl = console.log;
@@ -13,6 +26,10 @@ import { utils } from "./utils.mjs";
 import { tpl } from "./tpl.mjs";
 import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
+
+
+
+
 
 
 
@@ -78,7 +95,9 @@ void function(){
     win = window;
     utils.strip_globals(win, function(){
       utils.pre(doc, window, function(err,res){
-        if(err){return cl(err)}
+        if(err){
+          return ce(err)
+        }
         let color_picker = h('input.form-control.color-picker.inp-dark.mb-4.mt-4',{
           type:'color',
           title: 'theme',

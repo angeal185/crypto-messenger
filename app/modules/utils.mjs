@@ -21,7 +21,6 @@ const utils = {
         utils.add_font(res[i], doc);
       }
       utils.add_styles(doc, 'main');
-
       cb(false)
     })
   },
