@@ -86,18 +86,19 @@ const rout = {
         this.onkeyup = null;
       }
     }),
+    welcome_div = h('div.card.dark-bg.mb-4',
+      h('div.card-body',
+        h('p', config.info),
+        h('span.float-right.text-success.cp',{
+          onclick: function(){
+            ls.set('bulbasaur',true);
+            welcome_div.remove()
+          }
+        },'dismiss')
+      )
+    ),
     create_cipherkey = h('div.row',
-      function(){
-        if(!ls.get('bulbasaur')){
-          return h('div.col-12',
-            h('div.card.dark-bg.mb-4',
-              h('div.card-body',
-                h('p', config.info)
-              )
-            )
-          )
-        }
-      },
+      h('div.col-12'),
       h('div.col-lg-6',
         h('h5.text-success', 'Cryptokey',
           h('i.icon-eye.float-right.cp.ml-4.float-right', {
@@ -446,6 +447,10 @@ const rout = {
         key_inp_1, key_inp_2, key_inp_3, key_inp_4,
         cryptokey_inp
       )
+    }
+
+    if(!ls.get('bulbasaur')){
+      create_cipherkey.firstChild.append(welcome_div)
     }
 
     dest.append(create_cipherkey)

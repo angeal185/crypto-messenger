@@ -80,14 +80,11 @@ const tpl = {
         tpl.status_bar()
       ),
       h('div#main-content.container-fluid',
-        h('div#app-main',
-          tpl.app_main()
-        )
+        tpl.app_main()
       ),
       color_picker
     )
     return baseTpl
-
   },
   to_top: function(){
 
@@ -190,21 +187,14 @@ const tpl = {
     return sb;
 
   },
-  app_main: function(dest){
-    let app_main_base = h('div'),
-    main_row = h('div.row'),
-    msg_main = h('div');
-
-    app_main_base.append(
-      main_row,
-      msg_main
-    )
+  app_main: function(){
+    let app_main_base = h('app-content');
 
     window.addEventListener("rout", function(evt) {
       evt = evt.detail;
       history.replaceState(null, "", evt.dest);
-      utils.empty(msg_main, function(){
-        rout[evt.dest](msg_main)
+      utils.empty(app_main_base, function(){
+        rout[evt.dest](app_main_base)
         document.title = evt.title;
       })
     });

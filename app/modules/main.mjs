@@ -92,6 +92,7 @@ void function(){
         if(err){
           return ce(err)
         }
+        
         doc.body.append(tpl.base(doc))
         window.onload = null;
         document.scripts[0].remove();
