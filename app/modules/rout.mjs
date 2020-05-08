@@ -11,7 +11,6 @@ import { xcrypt } from './xcrypt.mjs';
 const rout = {
   crypto_key: function(dest){
 
-
     let key_inp_slug = h('input.form-control.inp-dark.mb-2',{
       type: 'text',
       autocomplete: 'new-password',
@@ -51,9 +50,7 @@ const rout = {
     dec_ta = h('sec-ta.form-control.inp-dark.mb-3.h-5', {
       textContent: 'Decrypted text'
     }),
-    cryptokey_inp = h('sec-ta.form-control.inp-dark.h-10.sec-txt', {
-      rows: 6
-    }),
+    cryptokey_inp = h('sec-ta.form-control.inp-dark.h-10.sec-txt'),
     import_inp = h('input.hidden', {type: 'file'}),
     export_key = h('small.float-right.cp.sh-95', {
       onclick: function(){
@@ -224,6 +221,7 @@ const rout = {
               }
               utils.del_sp(evt.target, 'Store Local')
             })
+
           }
         }, 'Store Local'),
         h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
@@ -329,7 +327,7 @@ const rout = {
             }
 
             let obj = {
-              url: 'https://jsonbox.io/'+ kf.ID,
+              url: [config.box, kf.ID].join('/'),
               api: kf.UUID,
               method: 'POST',
               body: {
@@ -338,13 +336,13 @@ const rout = {
                 date: Date.now()
               }
             }
-            // create here
+
             utils.box_add(obj, function(err,res){
               if(err){
                 ce(err)
                 return utils.toast('danger', 'failed to create new message')
               }
-              cl(res)
+
               utils.toast('success', "new message stored");
               return
             });
@@ -395,7 +393,7 @@ const rout = {
                 }
 
                 let obj = {
-                  url: 'https://jsonbox.io/'+ kf.ID,
+                  url: [config.box, kf.ID].join('/'),
                   api: kf.UUID,
                   method: 'POST',
                   body: {
@@ -441,7 +439,6 @@ const rout = {
   crypto_store: function(dest){
 
     let kf = ss.get_enc('charmander');
-    cl(kf)
 
     let info_div = h('div',
       tpl.box_info('Slug', kf.slug, 'Crypto store slug'),
@@ -457,7 +454,7 @@ const rout = {
       )
     )
 
-    utils.getJSON('https://jsonbox.io/_meta/'+ kf.ID, function(err,res){
+    utils.getJSON([config.box, '_meta', kf.ID].join('/'), function(err,res){
       if(err){
         ce(err)
         utils.toast('danger', 'failed to fetch Crypto store data')
@@ -490,8 +487,8 @@ const rout = {
           type: 'button',
           onclick: function(evt){
             utils.add_sp(evt.target, 'Deleting');
-            let kf = ss.get_enc('charmander');
-            let url = 'https://jsonbox.io/'+ kf.ID + '?q=date:>0';
+            let kf = ss.get_enc('charmander'),
+            url = [config.box, kf.ID].join('/') + '?q=date:>0';
             utils.box_del({url: url, api: kf.UUID},function(err,res){
               if(err){
                 utils.toast('danger', 'Failed to delete messages.');
@@ -519,7 +516,7 @@ const rout = {
         }, 'Export Store')
       )
 
-      utils.getJSON('https://jsonbox.io/'+ kf.ID, function(err,res){
+      utils.getJSON([config.box, kf.ID].join('/'), function(err,res){
         if(err || !res){
           ce(err)
           return
@@ -536,14 +533,13 @@ const rout = {
               kf[config.crypt_order[2]]
             ], kf.HMAC)
 
-            res[i].ptext = dec_data.ptext
+            res[i].ptext = dec_data.ptext;
 
             if(dec_data.hmac === res[i].hmac){
               res[i].is_valid = 'Valid'
             } else {
               res[i].is_valid = 'invalid'
             }
-
 
             message_div.append(tpl.msg_item(res[i]))
 

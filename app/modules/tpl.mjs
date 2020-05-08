@@ -137,12 +137,14 @@ const tpl = {
             h('i.icon-envelope.ml-2.text-success.cp',{
               title: config.email,
               onclick: function(){
+                cnsl(['[auth:worker] ', 'opening poor-mans mailto link...'], ['lime','cyan']);
                 window.open('mailto:'+ config.email +'?subject=contact')
               }
             }),
             h('i.icon-rss.ml-2.text-success.cp',{
               title: 'rss',
               onclick: function(){
+                cnsl(['[auth:worker] ', 'opening link to rss feed...'], ['lime','cyan']);
                 window.open(config.rss)
               }
             }),
@@ -172,9 +174,6 @@ const tpl = {
     })
 
     return sb;
-
-  },
-  crypto_key: function(){
 
   },
   app_main: function(dest){
@@ -305,7 +304,7 @@ const tpl = {
           onclick: function(evt){
             utils.add_sp(evt.target, 'Deleting');
             let kf = ss.get_enc('charmander');
-            let url = ['https://jsonbox.io', kf.ID, obj._id].join('/')
+            let url = [config.box, kf.ID, obj._id].join('/')
             utils.box_del({url: url, api: kf.UUID},function(err,res){
               if(err){
                 utils.toast('danger', 'Failed to delete message.');

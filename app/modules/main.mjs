@@ -14,13 +14,19 @@ import { tpl } from "./tpl.mjs";
 import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
 
+
+/*
+window.navigator.storage.estimate().then(function(estimate) {
+  cl(utils.formatBytes(estimate.quota, 2))
+  cl(
+    (estimate.usage / estimate.quota * 100).toFixed(2)
+  );
+});
+*/
+
 void function(){
   ss.del('charmander');
   ss.del('lapras');
-
-  window.addEventListener("rout", function(evt) {
-    history.replaceState(null, "", evt.detail.dest);
-  });
 
   window.app = {
     rout: function(obj){
