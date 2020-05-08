@@ -4,6 +4,7 @@ import { ls,ss } from "./storage.mjs";
 import { xcrypt } from './xcrypt.mjs';
 import { enc } from './enc.mjs';
 import { config } from './config.mjs';
+import { cnsl } from './cnsl.mjs';
 import { rout } from './rout.mjs';
 
 const tpl = {
