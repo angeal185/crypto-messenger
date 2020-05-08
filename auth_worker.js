@@ -92,8 +92,6 @@ const utils = {
   }
 }
 
-let cnsl;
-
 onmessage = function(evt) {
 
   if(evt.isTrusted && evt.userActivation === null){

@@ -15,7 +15,7 @@ const utils = {
     cb()
   },
   pre: function(doc, win, cb){
-    utils.fetchJSON('./app/data/fonts.json', function(err,res){
+    utils.fetchJSON(config.app_path + '/app/data/fonts.json', function(err,res){
       if(err){return cb(err)}
       for (let i = 0; i < res.length; i++) {
         utils.add_font(res[i], doc);
@@ -26,11 +26,12 @@ const utils = {
     })
   },
   add_styles: function(doc, styl){
-    utils.fetchJSON('./app/data/styles.json', function(err,res){
+    utils.fetchJSON(config.app_path + '/app/data/styles.json', function(err,res){
       if(err){
         cnsl(['[task:styles] ', 'Styles failed to fetch'], ['red','magenta']);
         return ce(err)
       }
+
       let theme = ls.get('growlithe');
       try {
         let sheet = new CSSStyleSheet();
@@ -78,7 +79,19 @@ const utils = {
   shuffle: function(arr) {
     return arr.sort(() => Math.random() - 0.5);
   },
+  valid_url: function(url){
+    let i = new URL(url);
+    if(i.protocol === 'https:'){
+      return true;
+    }
+    return false
+  },
   fetchJSON: function(url, cb){
+    if(!utils.valid_url(url)){
+      let msg = 'Insecure request attempt detected and blocked.';
+      cnsl(['[monitor:fetch] ', msg], ['red','magenta']);
+      return cb(msg)
+    }
     fetch(url, {
       method: 'GET',
       headers: {
@@ -88,6 +101,7 @@ const utils = {
       }
     })
     .then(function(res){
+
       if (res.status >= 200 && res.status < 300) {
         return res.json();
       } else {
@@ -102,7 +116,11 @@ const utils = {
     })
   },
   getJSON: function(url, cb){
-
+    if(!utils.valid_url(url)){
+      let msg = 'Insecure request attempt detected and blocked.';
+      cnsl(['[monitor:fetch] ', msg], ['red','magenta']);
+      return cb(msg)
+    }
     fetch(url, {
       method: 'GET',
       headers: {
@@ -129,6 +147,11 @@ const utils = {
     })
   },
   box_add: function(obj, cb){
+    if(!utils.valid_url(obj.url)){
+      let msg = 'Insecure request attempt detected and blocked.';
+      cnsl(['[monitor:fetch] ', msg], ['red','magenta']);
+      return cb(msg)
+    }
     fetch(obj.url, {
       method: obj.method,
       headers: {
@@ -157,6 +180,11 @@ const utils = {
     })
   },
   box_del: function(obj, cb){
+    if(!utils.valid_url(obj.url)){
+      let msg = 'Insecure request attempt detected and blocked.';
+      cnsl(['[monitor:fetch] ', msg], ['red','magenta']);
+      return cb(msg)
+    }
     fetch(obj.url, {
       method: 'DELETE',
       headers: {
@@ -217,12 +245,14 @@ const utils = {
     i.title = d;
   },
   is_online: function(i){
-    utils.globe_change(i,'text-success','text-danger', 'text-warning','online')
-    ss.set('voltorb', true)
+    utils.globe_change(i,'text-success','text-danger', 'text-warning','online');
+    ss.set('voltorb', true);
+    cnsl(['[monitor:connection] ', 'web connection connected.'], ['lime','cyan']);
   },
   is_offline: function(i){
-    utils.globe_change(i,'text-danger','text-success', 'text-warning', 'offline')
-    ss.set('voltorb', false)
+    utils.globe_change(i,'text-danger','text-success', 'text-warning', 'offline');
+    ss.set('voltorb', false);
+    cnsl(['[monitor:connection] ', 'web connection disconnected.'], ['red','magenta']);
   },
   add_sp: function(item, text){
     utils.emptySync(item);
@@ -293,13 +323,13 @@ const utils = {
    }
   },
   formatBytes: function(bytes, decimals) {
-    if (bytes === 0) return '0 Bytes';
-
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    if (bytes === 0){
+      return '0 Bytes';
+    }
+    const k = 1024,
+    dm = decimals < 0 ? 0 : decimals,
+    sizes = ['Bytes', 'KB', 'MB', 'GB'],
+    i = Math.floor(Math.log(bytes) / Math.log(k));
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   },
@@ -351,6 +381,26 @@ const utils = {
     ki.textContent = res;
     db_update(obj.slug)
 
+  },
+  check_store_quota:function(){
+    try {
+      window.navigator.storage.estimate().then(function(i) {
+        let max = utils.formatBytes(i.quota, 2),
+        used = utils.formatBytes(i.usage, 2),
+        per = (i.usage / i.quota * 100).toFixed(2);
+        cnsl(
+          ['[monitor:storage] ',
+          ['currently using', used, 'out of', max, 'of storage.', per+'%'].join(' ')],
+          ['lime','cyan']
+        );
+      });
+    } catch (err) {
+      cnsl(
+        ['[monitor:storage] ',
+        'unable to check storage quota. your browser is obsolete and a security risk.'],
+        ['red','orange']
+      );
+    }
   }
 }
 

@@ -15,14 +15,6 @@ import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
 
 
-/*
-window.navigator.storage.estimate().then(function(estimate) {
-  cl(utils.formatBytes(estimate.quota, 2))
-  cl(
-    (estimate.usage / estimate.quota * 100).toFixed(2)
-  );
-});
-*/
 
 void function(){
   ss.del('charmander');
@@ -101,8 +93,8 @@ void function(){
         document.scripts[0].remove();
         app.rout({title: 'Crypto key', dest: 'crypto_key'})
         cnsl(['[task:app] ', 'app load success, starting background tasks...'], ['lime','cyan']);
-
         app.auth_init();
+        utils.check_store_quota();
       })
     })
   }

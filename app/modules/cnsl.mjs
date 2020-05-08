@@ -7,7 +7,7 @@ function cnsl(txt, color){
 
       for (let i = 0; i < txt.length; i++) {
         if(typeof txt[i] === 'string'){
-          txt[i] = txt[i].replace(/[-!$%^&*()_+|~=`{}\/;<>?,@#]/g,'');
+          txt[i] = txt[i].replace(/[!$^&*()_+|~=`{}\/;<>?,@#]/g,'');
         } else if(typeof txt[i] !== 'number'){
           throw '[cnsl]: input type is not of string or number';
         }

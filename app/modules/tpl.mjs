@@ -139,14 +139,18 @@ const tpl = {
               title: config.email,
               onclick: function(){
                 cnsl(['[auth:worker] ', 'opening poor-mans mailto link...'], ['lime','cyan']);
-                window.open('mailto:'+ config.email +'?subject=contact')
+                let x = window.open('mailto:'+ config.email +'?subject=contact');
+                setTimeout(function(){
+                  x.close();
+                  x = null;
+                },500)
               }
             }),
             h('i.icon-rss.ml-2.text-success.cp',{
               title: 'rss',
               onclick: function(){
                 cnsl(['[auth:worker] ', 'opening link to rss feed...'], ['lime','cyan']);
-                window.open(config.rss)
+                window.open(config.rss, 'crypto-messenger RSS feed', 'noopener,noreferrer')
               }
             }),
             online_globe
