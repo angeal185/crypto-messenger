@@ -27,12 +27,6 @@ import { tpl } from "./tpl.mjs";
 import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
 
-
-
-
-
-
-
 void function(){
   ss.del('charmander');
   ss.del('lapras');
@@ -98,16 +92,7 @@ void function(){
         if(err){
           return ce(err)
         }
-        let color_picker = h('input.form-control.color-picker.inp-dark.mb-4.mt-4',{
-          type:'color',
-          title: 'theme',
-          value: ls.get('growlithe') || '#000',
-          onchange: function(evt){
-            ls.set('growlithe', evt.target.value)
-            utils.ud_theme(doc, evt.target.value)
-          }
-        })
-        doc.body.append(tpl.base(doc),h('div.container-fluid', color_picker))
+        doc.body.append(tpl.base(doc))
         window.onload = null;
         document.scripts[0].remove();
         app.rout({title: 'Crypto key', dest: 'crypto_key'})

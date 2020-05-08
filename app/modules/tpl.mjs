@@ -64,8 +64,16 @@ const tpl = {
     )
   },
   base: function(doc){
-
-    let baseTpl = h('app-main',
+    let color_picker = h('input.form-control.color-picker.inp-dark.mb-4.mt-4',{
+      type:'color',
+      title: 'theme',
+      value: ls.get('growlithe') || '#000',
+      onchange: function(evt){
+        ls.set('growlithe', evt.target.value)
+        utils.ud_theme(doc, evt.target.value)
+      }
+    }),
+    baseTpl = h('app-main',
       tpl.header(),
       h('div.sub-content',
         tpl.to_top(),
@@ -75,7 +83,8 @@ const tpl = {
         h('div#app-main',
           tpl.app_main()
         )
-      )
+      ),
+      color_picker
     )
     return baseTpl
 
@@ -314,7 +323,7 @@ const tpl = {
               if(err){
                 utils.toast('danger', 'Failed to delete message.');
                 utils.del_sp(evt.target, 'Deleting');
-                return cl(err)
+                return ce(err)
               }
               utils.toast('success', res.message);
               lg_item.remove();
