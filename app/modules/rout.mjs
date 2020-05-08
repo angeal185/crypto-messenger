@@ -87,6 +87,17 @@ const rout = {
       }
     }),
     create_cipherkey = h('div.row',
+      function(){
+        if(!ls.get('bulbasaur')){
+          return h('div.col-12',
+            h('div.card.dark-bg.mb-4',
+              h('div.card-body',
+                h('p', config.info)
+              )
+            )
+          )
+        }
+      },
       h('div.col-lg-6',
         h('h5.text-success', 'Cryptokey',
           h('i.icon-eye.float-right.cp.ml-4.float-right', {
@@ -416,7 +427,7 @@ const rout = {
                     evt.target.removeAttribute('disabled');
                     return utils.toast('danger', 'unable to create crypto store, try again.')
                   }
-              
+
                   utils.toast('success', "crypto store created. Export your keyfile");
                   return
                 });
