@@ -387,7 +387,7 @@ const rout = {
           tpl.box_c_data('HMAC', config.hash, 'Authentication method to detect data tamper'),
           tpl.box_c_inp(key_inp_4),
           tpl.box_c_info('Mode', 'CBC', 'Block mode used by all ciphers'),
-          tpl.box_c_info('Bits', '256 * 4', '256 bit encryption used by all ciphers'),
+          tpl.box_c_info('Bits', '256 * 3', '256 bit encryption used by all ciphers'),
           tpl.box_c_info('KDF', 'PBKDF2', 'Key derivation function used to generate cipher keys'),
           h('div.col-12.text-right',
             h('button.btn.btn-sm.btn-outline-success.mt-2.sh-95', {
