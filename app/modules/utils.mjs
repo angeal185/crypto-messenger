@@ -381,6 +381,20 @@ const utils = {
     db_update(obj.slug)
 
   },
+  add_otp_data: function(res, slug, id, i1,i2,ki){
+
+    let obj = jp(res);
+
+    slug.value = obj.slug
+    id.textContent = obj.ID;
+    i1.textContent = obj.UUID;
+    i2.textContent = obj.HMAC;
+    ss.set_enc('mewtwo', obj);
+
+    ki.textContent = res;
+    db_update(obj.slug)
+
+  },
   check_store_quota:function(){
     try {
       window.navigator.storage.estimate().then(function(i) {
@@ -400,6 +414,14 @@ const utils = {
         ['red','orange']
       );
     }
+  },
+  change_mode: function(i){
+    ss.set('mode', i);
+    cnsl(
+      ['[monitor:mode] ',
+      'Mode changed to '+ i],
+      ['lime','cyan']
+    );
   }
 }
 

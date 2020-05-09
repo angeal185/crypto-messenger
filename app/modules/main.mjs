@@ -27,9 +27,13 @@ import { tpl } from "./tpl.mjs";
 import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
 
+import { bitshift } from "./bitshift.mjs";
+
 void function(){
-  ss.del('charmander');
-  ss.del('lapras');
+
+  for (let i = 0; i < config.del_arr.length; i++) {
+    ss.del(config.del_arr[i]);
+  }
 
   window.app = {
     rout: function(obj){
@@ -44,7 +48,7 @@ void function(){
     },
     auth_init: function(){
 
-      let does_exist = ls.set('pikachu');
+      let does_exist = ls.get('pikachu');
       if(!does_exist || typeof does_exist !== 'number' || does_exist < Date.now()){
 
         let auth_worker = new Worker(config.auth_worker.src);
@@ -92,7 +96,7 @@ void function(){
         if(err){
           return ce(err)
         }
-        
+
         doc.body.append(tpl.base(doc))
         window.onload = null;
         document.scripts[0].remove();
@@ -104,3 +108,23 @@ void function(){
     })
   }
 }()
+
+/*
+let str = 'hello world!',
+str_key = xcrypt.hex_encode(bitshift.utils.randomBytes(str.length)),
+ctext = bitshift.enc(str,str_key),
+ptext = bitshift.dec(ctext,str_key)
+//cl(ctext)
+//cl(ptext)
+*/
+
+let obj = {
+  slug: "test",
+  id: enc.rnd_id(),
+  uuid: enc.uuidv4()
+}
+
+
+cl(
+  bitshift.utils.pad_gen(obj)
+)

@@ -11,370 +11,49 @@ import { xcrypt } from './xcrypt.mjs';
 const rout = {
   crypto_key: function(dest){
 
-    let key_inp_slug = h('input.form-control.inp-dark.mb-2',{
-      type: 'text',
-      autocomplete: 'new-password',
-      onkeyup: function(evt){
-        let kf = ss.get_enc('charmander');
-        if(!kf){
-          enc.create_cipherkey_data(function(err,res){
-            if(err){dest.append(h('h5.text-danger', 'failed to create crypto key data'))}
-            utils.add_data(
-              js(res), key_inp_slug, key_inp_id, key_inp_0,
-              key_inp_1, key_inp_2, key_inp_3, key_inp_4,
-              cryptokey_inp
-            )
-          })
-        } else {
-          kf.slug = evt.target.value;
-          ss.set_enc('charmander', kf);
-          cryptokey_inp.textContent = js(kf)
-          db_update(kf.slug)
-        }
+    utils.change_mode('charmander');
 
-      }
-    }),
-    key_inp_id = tpl.sec_inp(),
+    let key_inp_id = tpl.sec_inp(),
     key_inp_0 = tpl.sec_inp(),
     key_inp_1 = tpl.sec_inp(),
     key_inp_2 = tpl.sec_inp(),
     key_inp_3 = tpl.sec_inp(),
     key_inp_4 = tpl.sec_inp(),
     key_inp_5 = tpl.sec_inp(),
-    enc_ta = h('sec-ta.form-control.inp-dark.mb-2.h-5', {
-      textContent: 'Encrypted text'
-    }),
-    hm_inp = h('sec-inp.form-control.inp-dark.mb-3', {
-      textContent: 'Message HMAC'
-    }),
-    dec_ta = h('sec-ta.form-control.inp-dark.mb-3.h-5', {
-      textContent: 'Decrypted text'
-    }),
+    enc_ta = tpl.sec_inp_base('ta', '5', 'Encrypted text'),
+    hm_inp = tpl.sec_inp_base('inp', '3', 'Message HMAC'),
+    dec_ta = tpl.sec_inp_base('ta', '5', 'Decrypted text'),
     cryptokey_inp = h('sec-ta.form-control.inp-dark.h-10.sec-txt'),
-    import_inp = h('input.hidden', {type: 'file'}),
-    export_key = h('small.float-right.cp.sh-95', {
-      onclick: function(){
-        let data = cryptokey_inp.textContent,
-        ctype;
-        try {
-          data = js(jp(data));
-          ctype = 'application/json'
-        } catch (err) {
-          ctype = 'text/plain'
-        }
-        utils.fs_write(data, 'cryptokey', ctype)
-      }
-    }, 'Export Cryptokey'),
-    new_key = h('small.float-right.cp.sh-95', {
-      onclick: function(){
-        enc.create_cipherkey_data(function(err,res){
-          if(err){dest.append(h('h5.text-danger', 'failed to create crypto key data'))}
-          utils.add_data(
-            js(res), key_inp_slug, key_inp_id, key_inp_0,
-            key_inp_1, key_inp_2, key_inp_3, key_inp_4,
-            cryptokey_inp
-          )
-        })
-      }
-    }, 'New Cryptokey'),
-    key_pass = h('input.form-control.inp-dark', {
-      autocomplete: 'new-password',
-      placeholder: 'Enter keyfile password',
-      onkeyup: function(evt){
-        this.type = 'password';
-        this.placeholder = '';
-        this.onkeyup = null;
-      }
-    }),
-    welcome_div = h('div.card.dark-bg.mb-4',
-      h('div.card-body',
-        h('p', config.info),
-        h('span.float-right.text-success.cp',{
-          onclick: function(){
-            ls.set('bulbasaur',true);
-            welcome_div.remove()
-          }
-        },'dismiss')
-      )
-    ),
+    key_inp_slug = tpl.cipher_slug_inp(key_inp_id, key_inp_0,key_inp_1, key_inp_2, key_inp_3, key_inp_4,cryptokey_inp),
+    import_inp = tpl.import_inp(),
+    export_key = tpl.export_btn(cryptokey_inp, 'Crypto key'),
+    new_key = tpl.cipher_key_create(key_inp_slug, key_inp_id, key_inp_0,key_inp_1, key_inp_2, key_inp_3, key_inp_4,cryptokey_inp),
+    key_pass = tpl.key_pass(),
+    welcome_div = tpl.welcome_div(config.cipher_info, 'bulbasaur'),
     create_cipherkey = h('div.row',
       h('div.col-12'),
       h('div.col-lg-6',
-        h('h5.text-success', 'Cryptokey',
-          h('i.icon-eye.float-right.cp.ml-4.float-right', {
-            onclick: function(){
-              cryptokey_inp.classList.toggle('sec-txt')
-            }
-          }),
-          export_key,
-          h('span.float-right.ml-2.mr-2', ' / '),
-          new_key
-        ),
+        tpl.key_type_head('Crypto key', cryptokey_inp, export_key, new_key),
         cryptokey_inp,
-        h('div.input-group.input-group-sm.mt-2.mb-2',
-          key_pass,
-          h('div.input-group-append.ch',
-            h('span.input-group-text.inp-dark.text-success', {
-              title: 'Keyfile encryption method'
-            }, 'AES-256-GCM')
-          )
-        ),
-        h('button.btn.btn-sm.btn-outline-success.mt-2.sh-95.mr-2', {
-          type: 'button',
-          onclick: function(evt){
-            utils.add_sp(evt.target, 'Selecting');
-            import_inp.click();
-            utils.del_sp(evt.target, 'Select file');
-          }
-        }, 'Select file'),
-        h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
-          type: 'button',
-          onclick: function(evt){
-            utils.add_sp(evt.target, 'Loading data');
-            try {
-              var reader = new FileReader();
-              var file = import_inp.files[0];
-              reader.onload = function(e) {
-                try {
-                  e = jp(e.target.result);
-                  if(e.ID){
-                    utils.add_data(
-                      js(e), key_inp_slug, key_inp_id, key_inp_0,
-                      key_inp_1, key_inp_2, key_inp_3, key_inp_4,
-                      cryptokey_inp
-                    )
-                    utils.del_sp(evt.target, 'Load data');
-                    return utils.toast('success', 'Cryptokey loaded');
-                  } else {
-                    throw 'not json'
-                  }
-
-                } catch (err) {
-                  cryptokey_inp.textContent = evt.target.result;
-                  utils.toast('info', 'data loaded');
-                  utils.del_sp(evt.target, 'Load data');
-                }
-              };
-
-              reader.readAsText(file);
-            } catch (err) {
-              utils.toast('warning', 'No file chosen');
-              utils.del_sp(evt.target, 'Load data');
-            }
-          }
-        }, 'Load data'),
-        h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
-          type: 'button',
-          onclick: function(evt){
-            utils.add_sp(evt.target, 'Encrypting');
-            let pass = key_pass.value;
-            if(pass.length < 8){
-              utils.toast('info','password length must be at least 8 characters');
-              return utils.del_sp(evt.target, 'Encrypt keyfile');
-            }
-
-            enc.aes_gcm(pass, cryptokey_inp.textContent, 'enc', function(err,res){
-              if(err){
-                utils.toast('danger','invalid input data');
-              } else {
-                cryptokey_inp.textContent = xcrypt.pack(res);
-                utils.toast('success','Keyfile encrypted');
-              }
-              utils.del_sp(evt.target, 'Encrypt keyfile');
-            })
-          }
-
-        }, 'Encrypt keyfile'),
-        h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
-          type: 'button',
-          onclick: function(evt){
-            utils.add_sp(evt.target, 'Decrypting');
-            let pass = key_pass.value;
-            if(pass.length < 8){
-              utils.del_sp(evt.target, 'Decrypt keyfile');
-              return utils.toast('info','password length must be at least 8 characters');
-            }
-
-            enc.aes_gcm(pass, xcrypt.pack(cryptokey_inp.textContent), 'dec', function(err,res){
-              if(err){
-                utils.toast('danger','invalid input data');
-                utils.del_sp(evt.target, 'Decrypt keyfile');
-                ce(err)
-              } else {
-                try {
-                  utils.add_data(
-                    res, key_inp_slug, key_inp_id, key_inp_0,
-                    key_inp_1, key_inp_2, key_inp_3, key_inp_4,
-                    cryptokey_inp
-                  )
-                  utils.toast('success','Keyfile decrypted and loaded');
-                } catch (err) {
-                  utils.toast('danger','invalid input data');
-                }
-              }
-              utils.del_sp(evt.target, 'Decrypt keyfile');
-            })
-          }
-        }, 'Decrypt keyfile'),
-        h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
-          type: 'button',
-          onclick: function(evt){
-            utils.add_sp(evt.target, 'Saving data');
-            let pass = key_pass.value;
-            if(pass.length < 8){
-              utils.toast('info','password length must be at least 8 characters');
-              return utils.del_sp(evt.target, 'Store Local');
-            }
-
-            enc.aes_gcm(pass, cryptokey_inp.textContent, 'enc', function(err,res){
-              if(err){
-                utils.toast('danger','invalid input data');
-                ce(err);
-              } else {
-                res = xcrypt.pack(res);
-                ls.set('eve', res);
-                utils.toast('success','Encrypted Keyfile Stored locally');
-              }
-              utils.del_sp(evt.target, 'Store Local')
-            })
-
-          }
-        }, 'Store Local'),
-        h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.sh-95', {
-          type: 'button',
-          onclick: function(evt){
-            utils.add_sp(evt.target, 'Loading data');
-            let pass = key_pass.value,
-            data = ls.get('eve');
-
-            if(pass.length < 8){
-              utils.del_sp(evt.target, 'Load Local');
-              return utils.toast('info','password length must be at least 8 characters');
-            }
-
-            if(!data || typeof data !== 'string' || data === ''){
-              utils.del_sp(evt.target, 'Load Local');
-              return utils.toast('info','Encrypted Keyfile not found');
-            }
-
-            enc.aes_gcm(pass, data, 'dec', function(err,res){
-              if(err){
-                utils.toast('danger','Invalid Keyfile');
-                ce(err);
-              } else {
-                try {
-                  utils.add_data(
-                    res, key_inp_slug, key_inp_id, key_inp_0,
-                    key_inp_1, key_inp_2, key_inp_3, key_inp_4,
-                    cryptokey_inp
-                  )
-                  utils.toast('success','Keyfile decrypted and loaded');
-                } catch (err) {
-                  utils.toast('danger','Invalid Keyfile');
-                }
-              }
-              utils.del_sp(evt.target, 'Load Local');
-            })
-          }
-        }, 'Load Local'),
+        tpl.key_enc_group(key_pass),
+        tpl.select_file(import_inp),
+        tpl.load_data_cipher(import_inp, key_inp_slug, key_inp_id, key_inp_0,key_inp_1, key_inp_2, key_inp_3, key_inp_4,cryptokey_inp),
+        tpl.enc_file(key_pass, cryptokey_inp),
+        tpl.dec_cipher_file(key_pass, key_inp_slug, key_inp_id, key_inp_0,key_inp_1, key_inp_2, key_inp_3, key_inp_4,cryptokey_inp),
+        tpl.store_local_btn('eve', key_pass, cryptokey_inp),
+        tpl.load_local_cipher(key_pass,key_inp_slug, key_inp_id, key_inp_0,key_inp_1, key_inp_2, key_inp_3, key_inp_4,cryptokey_inp),
         h('h5.text-success.mt-4', 'Create Message'),
         h('div.form-group.mt-4',
-          h('textarea.form-control.inp-dark.mb-3', {
-            autocomplete: 'off',
-            rows: 3,
-            placeholder: 'Start typing your message...',
-            onkeyup: function(evt){
-              let kf = ss.get_enc('charmander');
-              if(!kf){
-                enc.create_cipherkey_data(function(err,res){
-                  if(err){dest.append(h('h5.text-danger', 'failed to create crypto key data'))}
-                  utils.add_data(
-                    js(res), key_inp_slug, key_inp_id, key_inp_0,
-                    key_inp_1, key_inp_2, key_inp_3, key_inp_4,
-                    cryptokey_inp
-                  )
-                })
-              } else {
-                let msg = evt.target.value,
-                obj = enc.enc_msg(msg, [
-                  kf[config.crypt_order[0]],
-                  kf[config.crypt_order[1]],
-                  kf[config.crypt_order[2]]
-                ], kf.HMAC);
-
-                if(obj && obj.msg && obj.hmac){
-                  enc_ta.textContent = obj.msg;
-                  hm_inp.textContent = obj.hmac;
-                  dec_ta.textContent = obj.dec;
-                } else {
-                  enc_ta.textContent = '';
-                  hm_inp.textContent = '';
-                  dec_ta.textContent = ''
-                }
-              }
-
-
-            }
-          }),
-          enc_ta,
-          hm_inp,
-          dec_ta
+          tpl.cipher_ctext_msg(key_inp_slug, key_inp_id, key_inp_0, key_inp_1, key_inp_2, key_inp_3, key_inp_4,cryptokey_inp,enc_ta,hm_inp,dec_ta),
+          enc_ta,hm_inp,dec_ta
         ),
-        h('button.btn.btn-sm.btn-outline-success.mt-2.mr-2.mb-4.sh-95', {
-          type: 'button',
-          onclick: function(){
-            let msg = enc_ta.textContent;
-
-            if(msg.length < 1){
-              return utils.toast('info','no message to send');
-            }
-
-            let kf = ss.get_enc('charmander');
-            if(kf.slug === ''){
-              return utils.toast('info', 'slug cannot be empty')
-            }
-
-            if(enc_ta.textContent === '' || enc_ta.textContent === 'Encrypted text'){
-              return utils.toast('info', 'you have no encrypted message to send')
-            }
-
-            if(hm_inp.textContent === '' || hm_inp.textContent === 'Message HMAC'){
-              return utils.toast('info', 'invalid HMAC')
-            }
-
-            let obj = {
-              url: [config.box, kf.ID].join('/'),
-              api: kf.UUID,
-              method: 'POST',
-              body: {
-                ctext: enc_ta.textContent,
-                hmac: hm_inp.textContent,
-                date: Date.now()
-              }
-            }
-
-            utils.box_add(obj, function(err,res){
-              if(err){
-                ce(err)
-                return utils.toast('danger', 'failed to create new message')
-              }
-
-              utils.toast('success', "new message stored");
-              return
-            });
-          }
-        }, 'Send Message'),
+        tpl.cipher_send_btn(enc_ta, hm_inp, 'charmander', 0),
         import_inp
       ),
       h('div.col-lg-6',
         h('div.row',
           tpl.box_c_data('Cryptokey slug', 'SLUG', 'Enter a slug for your Cryptokey'),
-          h('div.col-8',
-            h('div.form-group',
-              h('label.w-100.text-success', 'Enter a slug for your Cryptokey'),
-              key_inp_slug
-            )
-          ),
+          tpl.slug_inp_head(key_inp_slug, 'key'),
           tpl.box_c_data('Cryptokey id', 'ID', 'Your unique Cryptokey id'),
           tpl.box_c_inp(key_inp_id),
           tpl.box_c_data('Cryptokey token', 'UUID', 'Cryptokey api auth token'),
@@ -389,56 +68,16 @@ const rout = {
           tpl.box_c_inp(key_inp_4),
           tpl.box_c_info('Mode', 'CBC', 'Block mode used by all ciphers'),
           tpl.box_c_info('Bits', '256 * 3', '256 bit encryption used by all ciphers'),
-          tpl.box_c_info('KDF', 'PBKDF2', 'Key derivation function used to generate cipher keys'),
-          h('div.col-12.text-right',
-            h('button.btn.btn-sm.btn-outline-success.mt-2.sh-95', {
-              type: 'button',
-              onclick: function(evt){
-                evt.target.setAttribute('disabled', true);
-                let kf = ss.get_enc('charmander');
-                if(kf.slug === ''){
-                  return utils.toast('info', 'slug cannot be empty')
-                }
-
-                if(enc_ta.textContent === '' || enc_ta.textContent === 'Encrypted text'){
-                  return utils.toast('info', 'you have no encrypted message to send')
-                }
-
-                if(hm_inp.textContent === '' || hm_inp.textContent === 'Message HMAC'){
-                  return utils.toast('info', 'invalid HMAC')
-                }
-
-                let obj = {
-                  url: [config.box, kf.ID].join('/'),
-                  api: kf.UUID,
-                  method: 'POST',
-                  body: {
-                    ctext: enc_ta.textContent,
-                    hmac: hm_inp.textContent,
-                    date: Date.now()
-                  }
-                }
-                // create here
-                utils.box_add(obj, function(err,res){
-                  if(err){
-                    ce(err)
-                    kf.UUID = enc.uuidv4();
-                    ss.set_enc('charmander', kf);
-                    cryptokey_inp.textContent = js(kf);
-                    evt.target.removeAttribute('disabled');
-                    return utils.toast('danger', 'unable to create crypto store, try again.')
-                  }
-
-                  utils.toast('success', "crypto store created. Export your keyfile");
-                  return
-                });
-
-              }
-            },'Create Store')
-          )
+          tpl.box_c_info('KDF', 'PBKDF2', 'Key derivation function used to generate cipher keys')
         )
       )
     )
+
+    if(!ls.get('bulbasaur')){
+      create_cipherkey.firstChild.append(welcome_div)
+    }
+
+    dest.append(create_cipherkey)
 
     let cdata = ss.get_enc('charmander');
     if(cdata && typeof cdata === 'object'){
@@ -449,16 +88,13 @@ const rout = {
       )
     }
 
-    if(!ls.get('bulbasaur')){
-      create_cipherkey.firstChild.append(welcome_div)
-    }
-
-    dest.append(create_cipherkey)
-
   },
   crypto_store: function(dest){
 
-    let kf = ss.get_enc('charmander');
+
+    let mode = ss.get('mode'),
+    kf = ss.get_enc(mode);
+
 
     let info_div = h('div',
       tpl.box_info('Slug', kf.slug, 'Crypto store slug'),
@@ -541,29 +177,48 @@ const rout = {
           ce(err)
           return
         }
+        cl(res)
         let len = res.length,
         ptext;
         if(len > 0){
           ss.set_enc('lapras', res)
-          for (let i = 0; i < res.length; i++) {
 
-            let dec_data = enc.dec_txt(res[i].ctext, [
-              kf[config.crypt_order[0]],
-              kf[config.crypt_order[1]],
-              kf[config.crypt_order[2]]
-            ], kf.HMAC)
+          if(mode === 'charmander'){
+            for (let i = 0; i < res.length; i++) {
 
-            res[i].ptext = dec_data.ptext;
+              let dec_data = enc.dec_msg(res[i].ctext, [
+                kf[config.crypt_order[0]],
+                kf[config.crypt_order[1]],
+                kf[config.crypt_order[2]]
+              ], kf.HMAC)
 
-            if(dec_data.hmac === res[i].hmac){
-              res[i].is_valid = 'Valid'
-            } else {
-              res[i].is_valid = 'invalid'
+              res[i].ptext = dec_data.ptext;
+
+              if(dec_data.hmac === res[i].hmac){
+                res[i].is_valid = 'Valid'
+              } else {
+                res[i].is_valid = 'invalid'
+              }
+
+              message_div.append(tpl.msg_item(res[i], kf))
+
             }
+          } else if(mode === 'mewtwo'){
+            for (let i = 0; i < res.length; i++) {
+              let dec_data = enc.dec_pad(res[i].ctext, kf.items[res[i].idx - 1], kf.HMAC)
 
-            message_div.append(tpl.msg_item(res[i]))
+              res[i].ptext = dec_data.ptext;
 
+              if(dec_data.hmac === res[i].hmac){
+                res[i].is_valid = 'Valid'
+              } else {
+                res[i].is_valid = 'invalid'
+              }
+
+              message_div.append(tpl.msg_item(res[i], kf))
+            }
           }
+
         } else {
           ss.del('lapras')
         }
@@ -572,6 +227,77 @@ const rout = {
     })
 
     dest.append(store_base)
+  },
+  crypto_otp: function(dest){
+
+    utils.change_mode('mewtwo');
+
+    let key_inp_id = tpl.sec_inp(),
+    key_inp_0 = tpl.sec_inp(),
+    key_inp_1 = tpl.sec_inp(),
+    key_inp_2 = tpl.sec_inp(),
+    enc_ta = tpl.sec_inp_base('ta', '5', 'Encrypted text'),
+    hm_inp = tpl.sec_inp_base('inp', '3', 'Message HMAC'),
+    dec_ta = tpl.sec_inp_base('ta', '5', 'Decrypted text'),
+    cryptokey_inp = h('sec-ta.form-control.inp-dark.h-10.sec-txt'),
+    key_inp_slug = tpl.pad_slug_inp(key_inp_id, key_inp_0, key_inp_1,cryptokey_inp),
+    import_inp = tpl.import_inp(),
+    pad_index_inp = tpl.pad_index_inp(),
+    export_key = tpl.export_btn(cryptokey_inp, 'Crypto pad'),
+    new_key = tpl.pad_key_create(key_inp_slug, key_inp_id, key_inp_0,key_inp_1, cryptokey_inp),
+    key_pass = tpl.key_pass(),
+    welcome_div = tpl.welcome_div(config.otp_info, 'diglett'),
+    create_cipherkey = h('div.row',
+      h('div.col-12'),
+      h('div.col-lg-6',
+        tpl.key_type_head('Crypto pad', cryptokey_inp, export_key, new_key),
+        cryptokey_inp,
+        tpl.key_enc_group(key_pass),
+        tpl.select_file(import_inp),
+        tpl.load_data_pad(import_inp,key_inp_slug, key_inp_id, key_inp_0,key_inp_1, cryptokey_inp),
+        tpl.enc_file(key_pass, cryptokey_inp),
+        tpl.dec_pad_file(key_pass,key_inp_slug, key_inp_id, key_inp_0, key_inp_1, cryptokey_inp),
+        tpl.store_local_btn('vaporeon', key_pass, cryptokey_inp),
+        tpl.load_local_pad(key_pass,key_inp_slug, key_inp_id, key_inp_0,key_inp_1, cryptokey_inp),
+        h('h5.text-success.mt-4', 'Create Message'),
+        h('div.form-group.mt-4',
+          tpl.pad_index_group(pad_index_inp),
+          tpl.pad_ctext_msg(pad_index_inp, key_inp_slug, key_inp_id, key_inp_0, key_inp_1, cryptokey_inp, enc_ta, hm_inp, dec_ta),
+          enc_ta, hm_inp, dec_ta
+        ),
+        tpl.cipher_send_btn(enc_ta, hm_inp, 'mewtwo', pad_index_inp),
+        import_inp
+      ),
+      h('div.col-lg-6',
+        h('div.row',
+          tpl.box_c_data('Crypto pad slug', 'SLUG', 'Enter a slug for your Crypto pad'),
+          tpl.slug_inp_head(key_inp_slug, 'pad'),
+          tpl.box_c_data('Crypto pad id', 'ID', 'Your unique Cryptokey id'),
+          tpl.box_c_inp(key_inp_id),
+          tpl.box_c_data('Crypto pad token', 'UUID', 'Crypto pad api auth token'),
+          tpl.box_c_inp(key_inp_0),
+          tpl.box_c_data('HMAC', config.hash, 'Authentication method to detect data tamper'),
+          tpl.box_c_inp(key_inp_1),
+          tpl.box_c_info('Mode', 'OTP', 'Cipher used'),
+          tpl.box_c_info('KDF', 'PBKDF2', 'Key derivation function used')
+        )
+      )
+    )
+
+    let cdata = ss.get_enc('mewtwo');
+    if(cdata && typeof cdata === 'object'){
+      utils.add_otp_data(
+        js(cdata), key_inp_slug, key_inp_id, key_inp_0,
+        key_inp_1, cryptokey_inp
+      )
+    }
+
+    if(!ls.get('diglett')){
+      create_cipherkey.firstChild.append(welcome_div)
+    }
+
+    dest.append(create_cipherkey)
+
   },
   crypto_tools: function(dest){
     dest.append(h('p','crypto_tools'))

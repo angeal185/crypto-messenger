@@ -1,5 +1,6 @@
 import { config } from './config.mjs';
 import { xcrypt } from './xcrypt.mjs';
+import { bitshift } from './bitshift.mjs';
 import  jsSHA  from "./sha.mjs";
 
 
@@ -60,6 +61,28 @@ const enc = {
       cb(false, obj)
     })
   },
+  create_pad_data: function(cb){
+
+    enc.pbkdf2_rnd(256, function(err, res){
+      if(err){
+        cb(true)
+        return ce(err)
+      }
+
+      res = xcrypt.hex_encode(res);
+
+      let obj = {
+        slug: '',
+        ID: xcrypt.hex_encode(enc.rnd(16)),
+        UUID: enc.uuidv4(),
+        HMAC: res
+      }
+
+      obj = bitshift.utils.pad_gen(obj)
+
+      cb(false, obj)
+    })
+  },
   is_equal: function(x,y){
     return xcrypt.utf82str(x) === xcrypt.utf82str(y)
   },
@@ -90,7 +113,7 @@ const enc = {
       return undefined;
     }
   },
-  dec_txt: function(ctext, arr, hkey){
+  dec_msg: function(ctext, arr, hkey){
     try {
 
       ctext = xcrypt.hex_decode(ctext)
@@ -105,6 +128,52 @@ const enc = {
         ptext: xcrypt.utf82str(xcrypt.dec3x(ctext, arr, config.crypt_order, 'hex')),
         hmac: sha_ob.getHMAC('HEX')
       }
+
+    } catch (err) {
+      ce(err)
+      return undefined;
+    }
+  },
+  enc_pad: function(ptext, key, hkey){
+    try {
+      if(ptext.length < 1){
+        return undefined
+      }
+
+      let final = bitshift.enc(ptext, key),
+      sha_ob = new jsSHA(config.hash, 'HEX');
+      sha_ob.setHMACKey(hkey, 'HEX');
+      sha_ob.update(final);
+
+      let obj = {
+        msg: final,
+        hmac: sha_ob.getHMAC('HEX'),
+        dec: bitshift.dec(final, key)
+      };
+
+      return obj;
+
+    } catch (err) {
+      ce(err)
+      return undefined;
+    }
+  },
+  dec_pad: function(ctext, key, hkey){
+    try {
+      if(ctext.length < 1){
+        return undefined
+      }
+
+      let sha_ob = new jsSHA(config.hash, 'HEX');
+      sha_ob.setHMACKey(hkey, 'HEX');
+      sha_ob.update(ctext);
+
+      let obj = {
+        ptext: bitshift.dec(ctext, key),
+        hmac: sha_ob.getHMAC('HEX')
+      };
+      cl(obj)
+      return obj;
 
     } catch (err) {
       ce(err)
