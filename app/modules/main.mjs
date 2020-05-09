@@ -20,7 +20,7 @@ function loader(){
   count = 0,
   item;
 
-  styl.innerHTML = 'html body{overflow:hidden!important}#loader{position:fixed;width:100%;height:100%;left:0;top:0;background-color:#111;z-index:999999}#smoke{position:absolute;background-color:#111;top:50%;lefT:50%;transform:translate(-50%,-50%)}#smoke ul{margin:0;padding:0;display:flex}#smoke ul li{list-style:none;font-weight:700;letter-spacing:20px;filter:blur(1px);color:#0a00fb;font-size:6em;border:ndfgdfgdfone;display:inline-block;font-family:sans!important}@keyframes smoke{0%{transform:rotate(0) translateY(0);opacity:1;filter:blur(1px)}100%{transform:rotate(45deg) translateY(-200px);opacity:0;filter:blur(20px)}}'
+  styl.innerHTML = 'html body{overflow:hidden!important}#loader{position:fixed;width:100%;height:100%;left:0;top:0;background-color:rgba(0,0,0,0.9);z-index:999999}#smoke{position:absolute;top:50%;lefT:50%;transform:translate(-50%,-50%)}#smoke ul{margin:0;padding:0;display:flex}#smoke ul li{list-style:none;font-weight:700;letter-spacing:20px;filter:blur(1px);color:#0a00fb;font-size:6em;border:ndfgdfgdfone;display:inline-block;font-family:sans!important}@keyframes smoke{0%{transform:rotate(0) translateY(0);opacity:1;filter:blur(1px)}100%{transform:rotate(45deg) translateY(-200px);opacity:0;filter:blur(20px)}}'
 
   document.head.append(styl)
 
