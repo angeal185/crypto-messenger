@@ -11,6 +11,50 @@ if(!window.fetch || !window.crypto || !window.crypto.subtle || !window.localStor
   throw new Error(msg)
 }
 
+function loader(){
+  let dv = document.createElement('div'),
+  styl = document.createElement('style'),
+  ul = document.createElement('ul'),
+  li = document.createElement('li'),
+  arr = 'Loading'.split(''),
+  count = 0,
+  item;
+
+  styl.innerHTML = 'html body{overflow:hidden!important}#loader{position:fixed;width:100%;height:100%;left:0;top:0;background-color:#111;z-index:999999}#smoke{position:absolute;background-color:#111;top:50%;lefT:50%;transform:translate(-50%,-50%)}#smoke ul{margin:0;padding:0;display:flex}#smoke ul li{list-style:none;font-weight:700;letter-spacing:20px;filter:blur(1px);color:#0a00fb;font-size:6em;border:ndfgdfgdfone;display:inline-block;font-family:sans!important}@keyframes smoke{0%{transform:rotate(0) translateY(0);opacity:1;filter:blur(1px)}100%{transform:rotate(45deg) translateY(-200px);opacity:0;filter:blur(20px)}}'
+
+  document.head.append(styl)
+
+  loader = dv.cloneNode();
+  loader.id = 'loader';
+  dv.id = 'smoke';
+  dv.append(ul);
+  loader.append(dv);
+
+
+
+  for (let i = 0; i < arr.length; i++) {
+    item = li.cloneNode();
+    item.innerText = arr[i]
+    ul.append(item)
+  }
+
+  document.body.append(loader)
+
+  let x = setInterval(function(){
+    ul.children[count].style.animation = 'smoke 1s linear forwards'
+    count++
+    if(count === arr.length){
+      clearInterval(x)
+      setTimeout(function(){
+       loader.remove();
+       styl.remove();
+      },1000)
+    }
+  },500)
+}
+
+loader();
+
 window.js = JSON.stringify;
 window.jp = JSON.parse;
 window.cl = console.log;
@@ -26,7 +70,6 @@ import { utils } from "./utils.mjs";
 import { tpl } from "./tpl.mjs";
 import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
-
 import { bitshift } from "./bitshift.mjs";
 
 void function(){
