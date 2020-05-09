@@ -15,7 +15,7 @@ const utils = {
     cb()
   },
   pre: function(doc, win, cb){
-    utils.fetchJSON(config.app_path + '/app/data/fonts.json', function(err,res){
+    utils.fetchJSON(config.app_path + 'app/data/fonts.json', function(err,res){
       if(err){return cb(err)}
       for (let i = 0; i < res.length; i++) {
         utils.add_font(res[i], doc);
@@ -25,7 +25,7 @@ const utils = {
     })
   },
   add_styles: function(doc, styl){
-    utils.fetchJSON(config.app_path + '/app/data/styles.json', function(err,res){
+    utils.fetchJSON(config.app_path + 'app/data/styles.json', function(err,res){
       if(err){
         cnsl(['[task:styles] ', 'Styles failed to fetch'], ['red','magenta']);
         return ce(err)
