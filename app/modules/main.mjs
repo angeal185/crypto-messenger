@@ -53,8 +53,6 @@ function loader(){
   },500)
 }
 
-loader();
-
 window.js = JSON.stringify;
 window.jp = JSON.parse;
 window.cl = console.log;
@@ -72,7 +70,12 @@ import { enc } from "./enc.mjs";
 import { ls,ss } from "./storage.mjs";
 import { bitshift } from "./bitshift.mjs";
 
+
+
+
+
 void function(){
+  loader();
 
   for (let i = 0; i < config.del_arr.length; i++) {
     ss.del(config.del_arr[i]);
