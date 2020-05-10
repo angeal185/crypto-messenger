@@ -1,14 +1,14 @@
 
 const config = {
-  app_path: location.href,
+  app_path: location.href.split('//')[1],
   crypt_order: ['TWOFISH', 'AES', 'SERPENT'],
   email: 'xcrypto-cryptomail@protonmail.ch',
-  box: 'https://jsonbox.io',
-  rss: 'https://cdn.jsdelivr.net/gh/angeal185/crypto-messenger/rss/news.xml',
+  box: 'jsonbox.io',
+  rss: 'cdn.jsdelivr.net/gh/angeal185/crypto-messenger/rss/news.xml',
   max_len: 2048,
   pad_max: 20,
   auth_worker: {
-    src: location.href + 'auth_worker.js',
+    src: location.href.split('//')[1] + '/auth_worker.js',
     interval: 10800000
   },
   hash: 'SHA3-512',

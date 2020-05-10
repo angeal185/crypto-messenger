@@ -14,8 +14,12 @@ const utils = {
     cnsl(['[task:strip] ', 'stripping dangerous or unused globals...'], ['lime','cyan']);
     cb()
   },
+  ensure_secure: function(i){
+    return 'https://'+ i
+  },
   pre: function(doc, win, cb){
-    utils.fetchJSON(config.app_path + 'app/data/fonts.json', function(err,res){
+
+    utils.fetchJSON(config.app_path + '/app/data/fonts.json', function(err,res){
       if(err){return cb(err)}
       for (let i = 0; i < res.length; i++) {
         utils.add_font(res[i], doc);
@@ -26,7 +30,8 @@ const utils = {
     })
   },
   add_styles: function(doc, styl, cb){
-    utils.fetchJSON(config.app_path + 'app/data/styles.json', function(err,res){
+
+    utils.fetchJSON(config.app_path + '/app/data/styles.json', function(err,res){
       if(err){
         cnsl(['[task:styles] ', 'Styles failed to fetch'], ['red','magenta']);
         return ce(err)
@@ -89,6 +94,7 @@ const utils = {
     return false
   },
   fetchJSON: function(url, cb){
+    url = utils.ensure_secure(url)
     if(!utils.valid_url(url)){
       let msg = 'Insecure request attempt detected and blocked.';
       cnsl(['[monitor:fetch] ', msg], ['red','magenta']);
@@ -118,6 +124,7 @@ const utils = {
     })
   },
   getJSON: function(url, cb){
+    url = utils.ensure_secure(url);
     if(!utils.valid_url(url)){
       let msg = 'Insecure request attempt detected and blocked.';
       cnsl(['[monitor:fetch] ', msg], ['red','magenta']);
@@ -149,12 +156,13 @@ const utils = {
     })
   },
   box_add: function(obj, cb){
-    if(!utils.valid_url(obj.url)){
+    let url = utils.ensure_secure(obj.url);
+    if(!utils.valid_url(url)){
       let msg = 'Insecure request attempt detected and blocked.';
       cnsl(['[monitor:fetch] ', msg], ['red','magenta']);
       return cb(msg)
     }
-    fetch(obj.url, {
+    fetch(url, {
       method: obj.method,
       headers: {
         'Content-Type': 'application/json',
@@ -182,12 +190,13 @@ const utils = {
     })
   },
   box_del: function(obj, cb){
-    if(!utils.valid_url(obj.url)){
+    let url = utils.ensure_secure(obj.url)
+    if(!utils.valid_url(url)){
       let msg = 'Insecure request attempt detected and blocked.';
       cnsl(['[monitor:fetch] ', msg], ['red','magenta']);
       return cb(msg)
     }
-    fetch(obj.url, {
+    fetch(url, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

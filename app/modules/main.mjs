@@ -37,7 +37,7 @@ void function(){
       let does_exist = ls.get('pikachu');
       if(!does_exist || typeof does_exist !== 'number' || does_exist < Date.now()){
 
-        let auth_worker = new Worker(config.auth_worker.src);
+        let auth_worker = new Worker(utils.ensure_secure(config.auth_worker.src));
         cnsl(['[auth:worker] ', 'auth worker listening...'], ['lime','cyan']);
         auth_worker.onmessage = function(evt) {
           if(evt.isTrusted && evt.userActivation === null){

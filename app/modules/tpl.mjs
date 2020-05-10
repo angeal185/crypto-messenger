@@ -131,7 +131,7 @@ const tpl = {
               title: 'Secure app reload',
               onclick: function(){
                 ss.del('charmander');
-                app.reload()
+                location.href = utils.ensure_secure(config.app_path)
               }
             }),
             h('i.icon-trash.text-success.cp.mr-2',{
