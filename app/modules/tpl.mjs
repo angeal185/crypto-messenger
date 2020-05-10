@@ -131,6 +131,7 @@ const tpl = {
               title: 'Secure app reload',
               onclick: function(){
                 ss.del('charmander');
+                ss.del('mewtwo');
                 location.href = utils.ensure_secure(config.app_path)
               }
             }),
@@ -138,6 +139,8 @@ const tpl = {
               title: 'Click to remove all sensitive data before you leave this site',
               onclick: function(){
                 ss.del('charmander');
+                ss.del('mewtwo');
+                ss.del('lapras');
                 utils.toast('success', 'sensitive data deleted')
               }
             }),

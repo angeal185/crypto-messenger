@@ -95,3 +95,10 @@ void function(){
     })
   }
 }()
+
+window.addEventListener("beforeunload", function (e) {
+  return e.preventDefault();
+  var confirmationMessage = "tst";
+  (e || window.event).returnValue = confirmationMessage;
+  return confirmationMessage;
+});
