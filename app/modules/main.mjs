@@ -73,7 +73,7 @@ import { bitshift } from "./bitshift.mjs";
 
 
 
-
+https://angeal185.github.io/crypto-messenger/
 void function(){
   loader();
 
@@ -154,23 +154,3 @@ void function(){
     })
   }
 }()
-
-/*
-let str = 'hello world!',
-str_key = xcrypt.hex_encode(bitshift.utils.randomBytes(str.length)),
-ctext = bitshift.enc(str,str_key),
-ptext = bitshift.dec(ctext,str_key)
-//cl(ctext)
-//cl(ptext)
-*/
-
-let obj = {
-  slug: "test",
-  id: enc.rnd_id(),
-  uuid: enc.uuidv4()
-}
-
-
-cl(
-  bitshift.utils.pad_gen(obj)
-)
