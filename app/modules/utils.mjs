@@ -20,11 +20,12 @@ const utils = {
       for (let i = 0; i < res.length; i++) {
         utils.add_font(res[i], doc);
       }
-      utils.add_styles(doc, 'main');
-      cb(false)
+      utils.add_styles(doc, 'main', function(){
+        cb(false)
+      });
     })
   },
-  add_styles: function(doc, styl){
+  add_styles: function(doc, styl, cb){
     utils.fetchJSON(config.app_path + 'app/data/styles.json', function(err,res){
       if(err){
         cnsl(['[task:styles] ', 'Styles failed to fetch'], ['red','magenta']);
@@ -55,6 +56,8 @@ const utils = {
             doc.adoptedStyleSheets[0].insertRule(':root{--gr:'+ theme +'!important;}',0)
           },2000)
         }
+      } finally {
+        cb()
       }
 
     })
