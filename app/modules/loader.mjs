@@ -51,12 +51,6 @@ void function(){
     }
   },500)
 
-  window.js = JSON.stringify;
-  window.jp = JSON.parse;
-  window.cl = console.log;
-  window.ce = console.error;
-  window.wcs = window.crypto.subtle;
-
 }()
 
 

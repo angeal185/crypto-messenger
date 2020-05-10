@@ -1,3 +1,9 @@
+window.js = JSON.stringify;
+window.jp = JSON.parse;
+window.cl = console.log;
+window.ce = console.error;
+window.wcs = window.crypto.subtle;
+
 import { config } from './config.mjs';
 import { cnsl } from './cnsl.mjs';
 import { h } from './h.mjs';
