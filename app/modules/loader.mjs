@@ -16,16 +16,17 @@ void function(){
   let dv = document.createElement('div'),
   styl = document.createElement('style'),
   ul = document.createElement('ul'),
-  li = document.createElement('li'),
-  arr = 'Loading'.split(''),
-  count = 0,
-  item;
+  li = document.createElement('li');
 
   styl.innerHTML = 'html body{overflow:hidden!important}#loader{position:fixed;width:100%;height:100%;left:0;top:0;background-color:rgba(0,0,0,0.9);z-index:999999}#smoke{position:absolute;top:50%;lefT:50%;transform:translate(-50%,-50%)}#smoke ul{margin:0;padding:0;display:flex}#smoke ul li{list-style:none;font-weight:700;letter-spacing:20px;filter:blur(1px);color:#0a00fb;font-size:6em;border:ndfgdfgdfone;display:inline-block;font-family:sans!important}@keyframes smoke{0%{transform:rotate(0) translateY(0);opacity:1;filter:blur(1px)}100%{transform:rotate(45deg) translateY(-200px);opacity:0;filter:blur(20px)}}'
 
   document.head.append(styl)
 
-  let loader = dv.cloneNode();
+  let loader = dv.cloneNode(),
+  arr = 'Loading'.split(''),
+  count = 0,
+  item;
+  
   loader.id = 'loader';
   dv.id = 'smoke';
   dv.append(ul);
@@ -52,6 +53,5 @@ void function(){
   },500)
 
 }()
-
 
 import './main.mjs';
