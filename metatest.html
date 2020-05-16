@@ -8,7 +8,7 @@
     <script>
       let item = document.createElement('script');
       item.type = 'application/ld+json';
-      item.innerHTML = {
+      item.innerText = JSON.stringify({
         "@context": "http://schema.org",
         "@type": "Book",
         "accessibilityAPI": "ARIA",
@@ -50,7 +50,7 @@
           "@type": "Organization",
           "name": "Holt, Rinehart and Winston"
         }
-      }
+      })
       document.body.append(item)
     </script>
   </body>
