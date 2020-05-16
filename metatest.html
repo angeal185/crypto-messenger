@@ -5,7 +5,10 @@
     <title></title>
   </head>
   <body>
-    <script type="application/ld+json">{
+    <script>
+      let item = document.createElement('script');
+      item.type = 'application/ld+json';
+      item.innerHTML = {
         "@context": "http://schema.org",
         "@type": "Book",
         "accessibilityAPI": "ARIA",
@@ -47,6 +50,8 @@
           "@type": "Organization",
           "name": "Holt, Rinehart and Winston"
         }
-      }</script>
+      }
+      document.body.append(item)
+    </script>
   </body>
 </html>
